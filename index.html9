@@ -1,0 +1,376 @@
+
+import { useState, useRef, useEffect } from "react";
+
+const SYSTEM_PROMPT = `You are AstroSoul, a warm, mystical astrology guide. You specialize in Vedic and Western astrology, zodiac signs, birth charts, planetary transits, compatibility, and cosmic guidance.
+
+Your personality:
+- Warm, poetic, and spiritually grounded
+- Use gentle cosmic metaphors and occasional celestial emojis (✨🌙⭐🪐☀️🌟💫)
+- Give meaningful, personalized guidance — not vague horoscope fluff
+- When asked about a sign or chart, give specific traits, strengths, challenges, and current cosmic weather
+- You offer guidance, not predictions set in stone
+- Keep responses focused and not too long — 3-5 sentences usually enough unless asked for detail
+- If someone shares their birth date, use it meaningfully
+
+Always end responses with something poetic or hopeful about the cosmos.`;
+
+const STAR_COUNT = 60;
+
+function Stars() {
+  const stars = Array.from({ length: STAR_COUNT }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 2 + 0.5,
+    opacity: Math.random() * 0.6 + 0.2,
+    delay: Math.random() * 4,
+  }));
+
+  return (
+    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      {stars.map((s) => (
+        <div
+          key={s.id}
+          style={{
+            position: "absolute",
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
+            borderRadius: "50%",
+            background: "#e8d5b7",
+            opacity: s.opacity,
+            animation: `twinkle ${2 + s.delay}s ease-in-out infinite alternate`,
+            animationDelay: `${s.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const ZodiacWheel = () => (
+  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+    <circle cx="22" cy="22" r="20" stroke="#c9a96e" strokeWidth="1.5" opacity="0.6" />
+    <circle cx="22" cy="22" r="14" stroke="#c9a96e" strokeWidth="1" opacity="0.4" />
+    <circle cx="22" cy="22" r="5" fill="#c9a96e" opacity="0.8" />
+    {Array.from({ length: 12 }, (_, i) => {
+      const angle = (i * 30 * Math.PI) / 180;
+      const x1 = 22 + 14 * Math.cos(angle);
+      const y1 = 22 + 14 * Math.sin(angle);
+      const x2 = 22 + 20 * Math.cos(angle);
+      const y2 = 22 + 20 * Math.sin(angle);
+      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#c9a96e" strokeWidth="1" opacity="0.5" />;
+    })}
+  </svg>
+);
+
+function TypingDots() {
+  return (
+    <div style={{ display: "flex", gap: 5, padding: "14px 18px", alignItems: "center" }}>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            background: "#c9a96e",
+            animation: "bounce 1.2s ease-in-out infinite",
+            animationDelay: `${i * 0.2}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function AstroSoul() {
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content: "Welcome, seeker ✨ The cosmos has drawn you here. Ask me anything about your sign, birth chart, compatibility, or what the stars hold for you. The cosmos is for everyone! 🌿",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  async function sendMessage() {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const userMsg = { role: "user", content: text };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const apiMessages = newMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: apiMessages,
+        }),
+      });
+
+      const data = await response.json();
+      const reply = data.content?.[0]?.text || "The stars are silent for now... please try again 🌙";
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "A cosmic disturbance occurred 🌊 Please try again in a moment." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  const suggestions = ["What's my Leo energy today?", "Scorpio & Leo compatibility?", "Explain my rising sign", "Mercury retrograde tips"];
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(160deg, #0d0a1a 0%, #1a1030 40%, #0f1a2e 100%)",
+        fontFamily: "'Georgia', 'Palatino', serif",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <style>{`
+        @keyframes twinkle { from { opacity: 0.2; transform: scale(1); } to { opacity: 0.9; transform: scale(1.3); } }
+        @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(201,169,110,0.15); } 50% { box-shadow: 0 0 35px rgba(201,169,110,0.3); } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); border-radius: 2px; }
+        textarea { resize: none; }
+      `}</style>
+
+      <Stars />
+
+      {/* Nebula glow blobs */}
+      <div style={{ position: "fixed", top: "10%", left: "5%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(100,50,200,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "fixed", bottom: "15%", right: "5%", width: 250, height: 250, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+      {/* Header */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 520,
+          padding: "20px 20px 12px",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          position: "relative",
+          zIndex: 10,
+          borderBottom: "1px solid rgba(201,169,110,0.15)",
+        }}
+      >
+        <div style={{ animation: "glow 3s ease-in-out infinite" }}>
+          <ZodiacWheel />
+        </div>
+        <div>
+          <div style={{ color: "#e8d5b7", fontSize: 20, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>AstroSoul</div>
+          <div style={{ color: "#c9a96e", fontSize: 11, letterSpacing: "0.12em", opacity: 0.8 }}>YOUR COSMIC GUIDE · ALWAYS ONLINE ✨</div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div
+        style={{
+          flex: 1,
+          width: "100%",
+          maxWidth: 520,
+          overflowY: "auto",
+          padding: "16px 16px 8px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
+              animation: "fadeUp 0.3s ease",
+            }}
+          >
+            {msg.role === "assistant" && (
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #2a1f0e, #3d2d14)", border: "1px solid rgba(201,169,110,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginRight: 8, marginTop: 2, fontSize: 14 }}>
+                🌿
+              </div>
+            )}
+            <div
+              style={{
+                maxWidth: "75%",
+                padding: "12px 16px",
+                borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                background: msg.role === "user"
+                  ? "linear-gradient(135deg, #3d2d14, #5c4020)"
+                  : "rgba(255,255,255,0.05)",
+                border: msg.role === "user"
+                  ? "1px solid rgba(201,169,110,0.3)"
+                  : "1px solid rgba(255,255,255,0.08)",
+                color: msg.role === "user" ? "#f0e0c0" : "#d4c4a0",
+                fontSize: 14,
+                lineHeight: 1.6,
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              {msg.role === "assistant" && (
+                <div style={{ color: "#c9a96e", fontSize: 10, letterSpacing: "0.1em", marginBottom: 5, fontFamily: "sans-serif" }}>ASTROSOUL · YOUR GUIDE</div>
+              )}
+              {msg.content}
+            </div>
+          </div>
+        ))}
+
+        {loading && (
+          <div style={{ display: "flex", justifyContent: "flex-start", animation: "fadeUp 0.3s ease" }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #2a1f0e, #3d2d14)", border: "1px solid rgba(201,169,110,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginRight: 8, marginTop: 2, fontSize: 14 }}>
+              🌿
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px 18px 18px 4px", backdropFilter: "blur(10px)" }}>
+              <TypingDots />
+            </div>
+          </div>
+        )}
+
+        {/* Suggestion chips — only show if just 1 message */}
+        {messages.length === 1 && !loading && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
+            {suggestions.map((s) => (
+              <button
+                key={s}
+                onClick={() => { setInput(s); inputRef.current?.focus(); }}
+                style={{
+                  padding: "7px 13px",
+                  borderRadius: 20,
+                  background: "rgba(201,169,110,0.08)",
+                  border: "1px solid rgba(201,169,110,0.25)",
+                  color: "#c9a96e",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  fontFamily: "Georgia, serif",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => e.target.style.background = "rgba(201,169,110,0.18)"}
+                onMouseLeave={(e) => e.target.style.background = "rgba(201,169,110,0.08)"}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input area */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 520,
+          padding: "12px 16px 20px",
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            gap: 10,
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(201,169,110,0.3)",
+            borderRadius: 16,
+            padding: "10px 10px 10px 16px",
+            backdropFilter: "blur(10px)",
+            animation: "glow 4s ease-in-out infinite",
+          }}
+        >
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKey}
+            placeholder="Ask me anything about astrology, your sign, compatibility..."
+            rows={1}
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              color: "#e8d5b7",
+              fontSize: 14,
+              fontFamily: "Georgia, serif",
+              lineHeight: 1.5,
+              maxHeight: 100,
+              overflow: "auto",
+            }}
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = Math.min(e.target.scrollHeight, 100) + "px";
+            }}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={loading || !input.trim()}
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 10,
+              background: loading || !input.trim() ? "rgba(201,169,110,0.2)" : "linear-gradient(135deg, #c9a96e, #8b6914)",
+              border: "none",
+              cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 16,
+              flexShrink: 0,
+              transition: "all 0.2s",
+              transform: loading || !input.trim() ? "scale(0.95)" : "scale(1)",
+            }}
+          >
+            ✦
+          </button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 8, color: "rgba(201,169,110,0.45)", fontSize: 11, fontFamily: "sans-serif", letterSpacing: "0.05em" }}>
+          The stars have answers — ask away 🌿 · AstroSoul offers guidance, not predictions set in stone.
+        </div>
+      </div>
+    </div>
+  );
+}
