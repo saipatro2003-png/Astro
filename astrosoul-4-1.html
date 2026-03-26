@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AstroSoul — Your Cosmic Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a96e;
+      --gold-dim: rgba(201,169,110,0.3);
+      --gold-faint: rgba(201,169,110,0.08);
+      --text-bright: #e8d5b7;
+      --text-mid: #d4c4a0;
+      --text-dim: rgba(201,169,110,0.45);
+      --bg: linear-gradient(160deg, #0d0a1a 0%, #1a1030 40%, #0f1a2e 100%);
+      --bubble-user: linear-gradient(135deg, #3d2d14, #5c4020);
+      --bubble-ai: rgba(255,255,255,0.05);
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Georgia', 'Palatino Linotype', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      color: var(--text-mid);
+    }
+
+    /* ── Stars ── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #e8d5b7;
+      animation: twinkle var(--dur) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.15; transform: scale(1); }
+      to   { opacity: 0.9;  transform: scale(1.4); }
+    }
+
+    /* Nebula blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ── */
+    #app {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    #header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--gold-dim);
+      flex-shrink: 0;
+    }
+    #header svg { animation: glow 3s ease-in-out infinite; }
+    @keyframes glow {
+      0%,100% { filter: drop-shadow(0 0 4px rgba(201,169,110,0.2)); }
+      50%      { filter: drop-shadow(0 0 10px rgba(201,169,110,0.5)); }
+    }
+    #header-title { color: var(--text-bright); font-size: 20px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+    #header-sub   { color: var(--gold); font-size: 11px; letter-spacing: 0.12em; opacity: 0.8; font-family: sans-serif; margin-top: 2px; }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    .row {
+      display: flex;
+      animation: fadeUp 0.3s ease;
+    }
+    .row.user { justify-content: flex-end; }
+    .row.ai   { justify-content: flex-start; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2a1f0e, #3d2d14);
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-right: 8px;
+      margin-top: 2px;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.65;
+      backdrop-filter: blur(10px);
+    }
+    .bubble.ai {
+      background: var(--bubble-ai);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px 18px 18px 4px;
+      color: var(--text-mid);
+    }
+    .bubble.user {
+      background: var(--bubble-user);
+      border: 1px solid var(--gold-dim);
+      border-radius: 18px 18px 4px 18px;
+      color: #f0e0c0;
+    }
+    .bubble-label {
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+      font-family: sans-serif;
+    }
+
+    /* Typing dots */
+    #typing { display: none; }
+    #typing.visible { display: flex; }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); }
+      40%          { transform: translateY(-8px); }
+    }
+    #typing-bubble {
+      background: var(--bubble-ai);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px 18px 18px 4px;
+      padding: 14px 18px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Suggestion chips */
+    #chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 4px;
+      flex-shrink: 0;
+    }
+    .chip {
+      padding: 7px 13px;
+      border-radius: 20px;
+      background: var(--gold-faint);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: Georgia, serif;
+      transition: background 0.2s;
+    }
+    .chip:hover { background: rgba(201,169,110,0.18); }
+
+    /* ── Input area ── */
+    #input-wrap {
+      padding: 12px 16px 20px;
+      flex-shrink: 0;
+    }
+    #input-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--gold-dim);
+      border-radius: 16px;
+      padding: 10px 10px 10px 16px;
+      backdrop-filter: blur(10px);
+      animation: inputGlow 4s ease-in-out infinite;
+    }
+    @keyframes inputGlow {
+      0%,100% { box-shadow: 0 0 20px rgba(201,169,110,0.1); }
+      50%      { box-shadow: 0 0 35px rgba(201,169,110,0.25); }
+    }
+    #msg-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-bright);
+      font-size: 14px;
+      font-family: Georgia, serif;
+      line-height: 1.5;
+      resize: none;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+    #msg-input::placeholder { color: rgba(201,169,110,0.4); }
+    #send-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), #8b6914);
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      color: #1a1030;
+    }
+    #send-btn:disabled {
+      background: rgba(201,169,110,0.2);
+      cursor: not-allowed;
+      transform: scale(0.95);
+    }
+    #footer-note {
+      text-align: center;
+      margin-top: 8px;
+      color: var(--text-dim);
+      font-size: 11px;
+      font-family: sans-serif;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div class="blob" style="top:8%;left:3%;width:320px;height:320px;background:radial-gradient(circle,rgba(100,50,200,0.1) 0%,transparent 70%)"></div>
+<div class="blob" style="bottom:12%;right:3%;width:260px;height:260px;background:radial-gradient(circle,rgba(201,169,110,0.07) 0%,transparent 70%)"></div>
+
+<div id="app">
+
+  <!-- Header -->
+  <div id="header">
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+      <circle cx="22" cy="22" r="20" stroke="#c9a96e" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="22" cy="22" r="14" stroke="#c9a96e" stroke-width="1" opacity="0.4"/>
+      <circle cx="22" cy="22" r="5" fill="#c9a96e" opacity="0.8"/>
+      <line x1="22" y1="2" x2="22" y2="8" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="36.1" y1="7.9" x2="31.9" y2="12.1" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="42" y1="22" x2="36" y2="22" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="36.1" y1="36.1" x2="31.9" y2="31.9" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="22" y1="42" x2="22" y2="36" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="7.9" y1="36.1" x2="12.1" y2="31.9" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="2" y1="22" x2="8" y2="22" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="7.9" y1="7.9" x2="12.1" y2="12.1" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="29.1" y1="4.9" x2="27" y2="10.4" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="39.1" y1="14.9" x2="33.6" y2="17" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="39.1" y1="29.1" x2="33.6" y2="27" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="29.1" y1="39.1" x2="27" y2="33.6" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+    </svg>
+    <div>
+      <div id="header-title">AstroSoul</div>
+      <div id="header-sub">YOUR COSMIC GUIDE · ALWAYS ONLINE ✨</div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div id="messages">
+    <!-- Welcome message injected by JS -->
+  </div>
+
+  <!-- Suggestion chips -->
+  <div id="chips">
+    <button class="chip" onclick="useChip(this)">What's my Leo energy today?</button>
+    <button class="chip" onclick="useChip(this)">Scorpio & Leo compatibility?</button>
+    <button class="chip" onclick="useChip(this)">Explain my rising sign</button>
+    <button class="chip" onclick="useChip(this)">Mercury retrograde tips</button>
+  </div>
+
+  <!-- Input -->
+  <div id="input-wrap">
+    <div id="input-box">
+      <textarea id="msg-input" rows="1"
+        placeholder="Ask me anything about astrology, your sign, compatibility..."
+        oninput="autoResize(this)"
+        onkeydown="handleKey(event)"
+      ></textarea>
+      <button id="send-btn" onclick="sendMessage()">✦</button>
+    </div>
+    <div id="footer-note">The stars have answers — ask away 🌿 · AstroSoul offers guidance, not predictions set in stone.</div>
+  </div>
+
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────
+  // IMPORTANT: Replace with your actual Anthropic API key
+  const API_KEY = "YOUR_ANTHROPIC_API_KEY";
+
+  const SYSTEM_PROMPT = `You are AstroSoul, a warm, mystical astrology guide. You specialize in Vedic and Western astrology, zodiac signs, birth charts, planetary transits, compatibility, and cosmic guidance.
+
+Your personality:
+- Warm, poetic, and spiritually grounded
+- Use gentle cosmic metaphors and occasional celestial emojis (✨🌙⭐🪐☀️🌟💫)
+- Give meaningful, personalized guidance — not vague horoscope fluff
+- When asked about a sign or chart, give specific traits, strengths, challenges, and current cosmic weather
+- You offer guidance, not predictions set in stone
+- Keep responses focused — 3-5 sentences usually enough unless asked for detail
+- If someone shares their birth date, use it meaningfully
+- Always end with something poetic or hopeful about the cosmos`;
+
+  // ── Stars ────────────────────────────────────────────────
+  const starsEl = document.getElementById("stars");
+  for (let i = 0; i < 65; i++) {
+    const s = document.createElement("div");
+    s.className = "star";
+    const size = Math.random() * 2 + 0.5;
+    const dur = (2 + Math.random() * 4).toFixed(1) + "s";
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;opacity:${(Math.random()*0.5+0.15).toFixed(2)};--dur:${dur};animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    starsEl.appendChild(s);
+  }
+
+  // ── State ────────────────────────────────────────────────
+  let history = []; // {role, content}
+  let loading = false;
+
+  const messagesEl = document.getElementById("messages");
+  const inputEl    = document.getElementById("msg-input");
+  const sendBtn    = document.getElementById("send-btn");
+  const chipsEl    = document.getElementById("chips");
+
+  // ── Init ─────────────────────────────────────────────────
+  addBubble("ai", "Welcome, seeker ✨ The cosmos has drawn you here. Ask me anything about your sign, birth chart, compatibility, or what the stars hold for you. The cosmos is for everyone! 🌿");
+
+  // ── Helpers ──────────────────────────────────────────────
+  function addBubble(role, text) {
+    const row = document.createElement("div");
+    row.className = "row " + role;
+
+    if (role === "ai") {
+      const av = document.createElement("div");
+      av.className = "avatar";
+      av.textContent = "🌿";
+      row.appendChild(av);
+    }
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + role;
+
+    if (role === "ai") {
+      const label = document.createElement("div");
+      label.className = "bubble-label";
+      label.textContent = "ASTROSOUL · YOUR GUIDE";
+      bubble.appendChild(label);
+    }
+
+    const content = document.createElement("div");
+    content.textContent = text;
+    bubble.appendChild(content);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    scrollBottom();
+    return content; // return for streaming updates
+  }
+
+  function showTyping() {
+    const row = document.createElement("div");
+    row.className = "row ai";
+    row.id = "typing-row";
+
+    const av = document.createElement("div");
+    av.className = "avatar";
+    av.textContent = "🌿";
+
+    const tb = document.createElement("div");
+    tb.id = "typing-bubble";
+    for (let i = 0; i < 3; i++) {
+      const d = document.createElement("div");
+      d.className = "dot";
+      tb.appendChild(d);
+    }
+
+    row.appendChild(av);
+    row.appendChild(tb);
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    const tr = document.getElementById("typing-row");
+    if (tr) tr.remove();
+  }
+
+  function scrollBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function setLoading(val) {
+    loading = val;
+    sendBtn.disabled = val;
+    if (val) showTyping(); else hideTyping();
+  }
+
+  function autoResize(el) {
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 100) + "px";
+  }
+
+  function handleKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function useChip(btn) {
+    inputEl.value = btn.textContent;
+    autoResize(inputEl);
+    inputEl.focus();
+    chipsEl.style.display = "none";
+  }
+
+  // ── Send ─────────────────────────────────────────────────
+  async function sendMessage() {
+    const text = inputEl.value.trim();
+    if (!text || loading) return;
+
+    // Hide chips after first message
+    chipsEl.style.display = "none";
+
+    // Add user bubble
+    addBubble("user", text);
+    history.push({ role: "user", content: text });
+
+    inputEl.value = "";
+    inputEl.style.height = "auto";
+    setLoading(true);
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": API_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-5",
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: history,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error?.message || "API error " + res.status);
+
+      const reply = data.content?.[0]?.text || "The stars are quiet right now... please try again 🌙";
+      history.push({ role: "assistant", content: reply });
+      setLoading(false);
+      addBubble("ai", reply);
+
+    } catch (err) {
+      // Remove the last user message from history so the conversation stays in sync
+      history.pop();
+      setLoading(false);
+      addBubble("ai", "A cosmic disturbance occurred 🌊 — " + err.message + ". Please check your API key.");
+    }
+  }
+</script>
+</body>
+</html>
