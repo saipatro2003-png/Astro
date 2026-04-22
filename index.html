@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthCore — Intelligent Wellness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════
+   ZENFLOW DESIGN SYSTEM — HEALTHCORE
+═══════════════════════════════════════ */
+:root {
+  /* Canvas */
+  --c0: #F8F4EF;
+  --c1: #F2EDE5;
+  --c2: #EAE2D5;
+  --c3: #E0D5C3;
+  --white: #FFFFFF;
+
+  /* Sage (primary) */
+  --sg:   #6B8F71;
+  --sg-l: #A8C5AD;
+  --sg-p: #D8EAD9;
+  --sg-d: #4A6B50;
+  --sg-m: rgba(107,143,113,.09);
+
+  /* Terra (secondary) */
+  --tr:   #C17D5E;
+  --tr-l: #DFA882;
+  --tr-p: #F2DDD0;
+  --tr-d: #8F4D2C;
+
+  /* Lavender */
+  --lv:   #9B8BB4;
+  --lv-p: #E4DEEE;
+  --lv-m: rgba(155,139,180,.09);
+
+  /* Amber */
+  --am:   #C49A3C;
+  --am-p: #F5E9C2;
+
+  /* Rose */
+  --rs:   #C07680;
+  --rs-p: #F0DADE;
+
+  /* Ink */
+  --k0: #2C2520;
+  --k1: #4A3F38;
+  --k2: #6E6259;
+  --k3: #9B9089;
+  --k4: #C4BAB2;
+  --k5: #DDD5CC;
+
+  /* Borders */
+  --b0: rgba(44,37,32,.07);
+  --b1: rgba(44,37,32,.12);
+  --b2: rgba(44,37,32,.18);
+
+  /* Type */
+  --fd: 'Playfair Display', Georgia, serif;
+  --fb: 'Instrument Sans', system-ui, sans-serif;
+
+  /* Radii */
+  --r2:4px; --r4:8px; --r6:12px; --r8:16px; --r10:20px; --r12:24px; --rp:999px;
+
+  /* Shadows */
+  --s1: 0 1px 3px rgba(44,37,32,.06);
+  --s2: 0 2px 8px rgba(44,37,32,.08), 0 0 0 1px rgba(44,37,32,.04);
+  --s3: 0 6px 22px rgba(44,37,32,.10), 0 1px 4px rgba(44,37,32,.05);
+  --s4: 0 16px 54px rgba(44,37,32,.12), 0 2px 8px rgba(44,37,32,.06);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+body{
+  background:var(--c0);
+  color:var(--k0);
+  font-family:var(--fb);
+  font-size:14.5px;
+  line-height:1.65;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* Ambient gradient */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 0%,   rgba(107,143,113,.065) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 45% at 90% 100%,  rgba(193,125,94,.05)   0%,transparent 55%),
+    radial-gradient(ellipse 40% 35% at 85% 15%,   rgba(155,139,180,.03)  0%,transparent 50%);
+}
+
+/* Paper grain */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:998;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:180px;
+}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--c1)}
+::-webkit-scrollbar-thumb{background:var(--sg-l);border-radius:2px}
+
+/* ══════════════════════
+   AUTH SCREEN
+══════════════════════ */
+.auth-wall{
+  position:fixed;inset:0;z-index:10000;
+  background:var(--c0);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  animation:pgIn .4s ease;
+}
+.auth-wall.hidden{display:none}
+
+.auth-card{
+  width:100%;max-width:420px;
+  background:white;border:1px solid var(--b0);border-radius:var(--r12);
+  padding:40px 38px;box-shadow:var(--s4);position:relative;overflow:hidden;
+}
+.auth-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(107,143,113,.09),transparent 70%);pointer-events:none;
+}
+
+.auth-logo{display:flex;align-items:center;gap:11px;margin-bottom:28px}
+.auth-title{font-family:var(--fd);font-size:24px;font-weight:600;color:var(--k0);margin-bottom:6px;letter-spacing:-.02em}
+.auth-sub{font-size:13px;color:var(--k3);margin-bottom:28px;line-height:1.5}
+
+.auth-tabs{display:flex;gap:0;border:1px solid var(--b1);border-radius:var(--r4);overflow:hidden;margin-bottom:26px}
+.auth-tab{flex:1;padding:9px;text-align:center;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--k3);background:transparent}
+.auth-tab.on{background:var(--sg);color:white}
+
+.auth-form{display:none}.auth-form.on{display:block}
+
+.auth-field{margin-bottom:16px}
+.auth-label{display:block;font-size:11px;font-weight:700;color:var(--k2);letter-spacing:.09em;text-transform:uppercase;margin-bottom:7px}
+.auth-input{
+  width:100%;background:var(--c1);border:1px solid var(--b1);
+  border-radius:var(--r4);padding:11px 14px;
+  color:var(--k0);font-family:var(--fb);font-size:14px;
+  transition:all .18s;outline:none;
+}
+.auth-input:focus{border-color:var(--sg-l);background:white;box-shadow:0 0 0 3px rgba(107,143,113,.12)}
+.auth-input::placeholder{color:var(--k4)}
+
+.auth-btn{
+  width:100%;padding:12px;border:none;border-radius:var(--r4);
+  background:var(--sg);color:white;font-family:var(--fb);font-size:14.5px;font-weight:600;
+  cursor:pointer;transition:all .2s;margin-top:6px;
+  box-shadow:0 3px 14px rgba(107,143,113,.32);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.auth-btn:hover{background:var(--sg-d);transform:translateY(-1px);box-shadow:0 6px 20px rgba(107,143,113,.38)}
+.auth-btn:disabled{opacity:.6;pointer-events:none}
+
+.auth-err{
+  background:var(--rs-p);border:1px solid rgba(192,118,128,.25);border-radius:var(--r4);
+  padding:9px 12px;font-size:12.5px;color:#7a3e48;margin-bottom:14px;display:none;
+}
+.auth-err.on{display:block}
+
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;font-size:12px;color:var(--k4)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--b0)}
+
+.auth-note{font-size:11.5px;color:var(--k4);text-align:center;margin-top:18px;line-height:1.5}
+
+/* demo accounts badge */
+.demo-badge{
+  background:var(--am-p);border:1px solid rgba(196,154,60,.2);border-radius:var(--r4);
+  padding:9px 13px;font-size:12px;color:#7a5c10;margin-bottom:18px;
+  display:flex;align-items:flex-start;gap:8px;line-height:1.5;
+}
+.demo-badge b{color:#6b4f0e}
+
+/* ── SHELL ── */
+.shell{display:block;min-height:100vh;position:relative;z-index:1}
+
+/* ══════════════════════
+   FLOATING TOP BAR
+══════════════════════ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:60px;
+  background:rgba(248,244,239,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b0);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;z-index:200;
+}
+
+.logo{display:flex;align-items:center;gap:11px}
+.logo-mark{
+  width:34px;height:34px;border-radius:var(--r4);
+  background:var(--sg);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(107,143,113,.32);
+  position:relative;overflow:hidden;
+}
+.logo-mark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 55%)}
+.logo-mark svg{width:17px;height:17px;fill:white;position:relative;z-index:1}
+.logo-name{font-family:var(--fd);font-size:17px;font-weight:600;color:var(--k0);letter-spacing:-.01em}
+.logo-name em{font-style:normal;color:var(--sg)}
+.logo-tag{font-size:10px;color:var(--k4);letter-spacing:.09em;text-transform:uppercase;font-weight:600;margin-top:1px}
+
+/* ── THREE DOT BUTTON ── */
+.dots-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--b1);
+  background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;box-shadow:var(--s1);position:relative;flex-shrink:0;
+}
+.dots-btn:hover{background:var(--sg-p);border-color:rgba(107,143,113,.3);box-shadow:var(--s2)}
+.dots-btn svg{width:18px;height:18px;fill:var(--k2)}
+.dots-btn.open{background:var(--sg);border-color:var(--sg)}
+.dots-btn.open svg{fill:white}
+
+/* ── NAV DROPDOWN ── */
+.nav-drop{
+  position:fixed;top:68px;right:24px;
+  background:white;border:1px solid var(--b0);border-radius:var(--r10);
+  box-shadow:var(--s4);z-index:999;
+  width:280px;padding:8px;
+  opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;
+  transition:opacity .22s cubic-bezier(.22,.61,.36,1),transform .22s cubic-bezier(.22,.61,.36,1);
+  overflow:hidden;
+}
+.nav-drop.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+
+/* user strip */
+.nd-user{
+  display:flex;align-items:center;gap:11px;
+  padding:12px 12px 11px;border-bottom:1px solid var(--b0);margin-bottom:7px;
+  cursor:pointer;border-radius:var(--r6);transition:background .18s;
+}
+.nd-user:hover{background:var(--c1)}
+.u-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--sg-l),var(--sg));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:white;font-family:var(--fd);
+}
+.u-nm{font-size:13px;font-weight:600;color:var(--k1)}
+.u-pl{font-size:11px;color:var(--sg);font-weight:600}
+
+/* group label */
+.nd-lbl{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--k4);padding:5px 10px 4px;margin-top:4px}
+
+/* nav item */
+.ni{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r4);
+  cursor:pointer;transition:all .16s;
+  font-size:13.5px;font-weight:500;color:var(--k2);
+  margin-bottom:1px;user-select:none;
+}
+.ni:hover{background:var(--c1);color:var(--k0)}
+.ni.on{background:var(--sg-p);color:var(--sg-d)}
+.ni-ic{width:28px;height:28px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .18s}
+.ni.on .ni-ic{background:white;box-shadow:var(--s1)}
+.ni-badge{margin-left:auto;background:var(--lv-p);color:var(--lv);font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:var(--rp);letter-spacing:.04em}
+
+/* tokens section */
+.nd-tok{margin:8px 0 4px;padding:0 4px}
+.tok{background:linear-gradient(135deg,var(--sg-p),rgba(255,255,255,.6));border:1px solid rgba(107,143,113,.2);border-radius:var(--r6);padding:12px}
+.tok-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tok-lbl{font-size:11px;font-weight:700;color:var(--k2);letter-spacing:.03em}
+.tok-n{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--sg-d);line-height:1}
+.tok-tr{height:4px;background:rgba(107,143,113,.14);border-radius:4px;overflow:hidden;margin-bottom:6px}
+.tok-fi{height:100%;background:linear-gradient(90deg,var(--sg-l),var(--sg));border-radius:4px;transition:width .8s ease}
+.tok-m{font-size:10.5px;color:var(--k3)}
+
+/* overlay backdrop */
+.nav-backdrop{
+  position:fixed;inset:0;z-index:998;display:none;
+}
+.nav-backdrop.open{display:block}
+
+
+/* ══════════════════════
+   MAIN
+══════════════════════ */
+.main{min-height:100vh}
+.pg{display:none;padding:80px 48px 48px;animation:pgIn .38s cubic-bezier(.22,.61,.36,1);max-width:1280px;margin:0 auto}
+.pg.on{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
+
+/* topbar */
+.tb{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:30px}
+.tb-t{font-family:var(--fd);font-size:27px;font-weight:600;color:var(--k0);letter-spacing:-.022em;line-height:1.15}
+.tb-s{font-size:13px;color:var(--k3);margin-top:4px}
+.tb-r{display:flex;gap:9px;align-items:center;padding-top:5px}
+
+/* ══════════════════════
+   BUTTONS
+══════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r4);font-family:var(--fb);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .2s;border:none;letter-spacing:.01em;text-decoration:none;white-space:nowrap}
+.b-sg{background:var(--sg);color:white;box-shadow:0 2px 8px rgba(107,143,113,.3)}
+.b-sg:hover{background:var(--sg-d);transform:translateY(-1px);box-shadow:0 4px 16px rgba(107,143,113,.38)}
+.b-tr{background:var(--tr);color:white;box-shadow:0 2px 8px rgba(193,125,94,.28)}
+.b-tr:hover{background:var(--tr-d);transform:translateY(-1px)}
+.b-ol{background:white;border:1px solid var(--b1);color:var(--k1);box-shadow:var(--s1)}
+.b-ol:hover{border-color:var(--sg-l);color:var(--sg-d);background:var(--sg-m)}
+.b-gh{background:transparent;border:1px solid var(--b0);color:var(--k2)}
+.b-gh:hover{background:var(--c1);color:var(--k0)}
+.b-sm{padding:7px 14px;font-size:12.5px}
+.b-fw{width:100%;justify-content:center}
+
+/* ══════════════════════
+   CARDS
+══════════════════════ */
+.card{background:white;border:1px solid var(--b0);border-radius:var(--r8);padding:24px;box-shadow:var(--s2);position:relative;overflow:hidden}
+.c-w{background:var(--c1);border-color:rgba(44,37,32,.07)}
+.c-sg{background:linear-gradient(140deg,var(--sg-p),rgba(255,255,255,.7));border-color:rgba(107,143,113,.2)}
+.c-tr{background:linear-gradient(140deg,var(--tr-p),rgba(255,255,255,.7));border-color:rgba(193,125,94,.2)}
+.c-lv{background:linear-gradient(140deg,var(--lv-p),rgba(255,255,255,.7));border-color:rgba(155,139,180,.2)}
+.c-am{background:linear-gradient(140deg,var(--am-p),rgba(255,255,255,.7));border-color:rgba(196,154,60,.2)}
+
+/* section head */
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.sh-t{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--k0);letter-spacing:-.01em}
+.sh-s{font-size:12px;color:var(--k3);margin-top:2px}
+
+/* ══════════════════════
+   GRIDS
+══════════════════════ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.g13{display:grid;grid-template-columns:1fr 1.6fr;gap:20px}
+.mb20{margin-bottom:20px}.mb28{margin-bottom:28px}
+
+/* ══════════════════════
+   HEALTH SCORE RING
+══════════════════════ */
+.rw{position:relative;width:168px;height:168px}
+.rsvg{width:100%;height:100%;transform:rotate(-90deg)}
+.rt{fill:none;stroke:var(--c2);stroke-width:9}
+.rf{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:471;stroke-dashoffset:471;transition:stroke-dashoffset 2.2s cubic-bezier(.34,1.2,.64,1)}
+.rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rn{font-family:var(--fd);font-size:44px;font-weight:600;color:var(--k0);line-height:1;letter-spacing:-.03em}
+.rl{font-size:11px;color:var(--k3);margin-top:2px;font-weight:500}
+
+/* ══════════════════════
+   PILLS
+══════════════════════ */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:var(--rp);font-size:11.5px;font-weight:600}
+.p-sg{background:var(--sg-p);color:var(--sg-d)}
+.p-tr{background:var(--tr-p);color:var(--tr-d)}
+.p-am{background:var(--am-p);color:#7a5c10}
+.p-rs{background:var(--rs-p);color:#7a3e48}
+.p-lv{background:var(--lv-p);color:#5a4478}
+
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--sg);flex-shrink:0;animation:lp 2.2s infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+
+/* ══════════════════════
+   METRICS
+══════════════════════ */
+.metric{background:white;border:1px solid var(--b0);border-radius:var(--r6);padding:18px 20px;box-shadow:var(--s1);transition:all .2s}
+.metric:hover{box-shadow:var(--s3);transform:translateY(-1px)}
+.m-ico{width:36px;height:36px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+.m-v{font-family:var(--fd);font-size:28px;font-weight:600;color:var(--k0);line-height:1;letter-spacing:-.02em}
+.m-u{font-size:12px;color:var(--k3);margin-left:3px}
+.m-n{font-size:12px;color:var(--k2);margin-top:5px;font-weight:500}
+.m-c{display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;margin-top:5px}
+.up{color:var(--sg)}.dn{color:var(--rs)}.fl{color:var(--k3)}
+
+/* ══════════════════════
+   PROGRESS BARS
+══════════════════════ */
+.prog{margin-bottom:15px}
+.prog:last-child{margin-bottom:0}
+.pr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pn{font-size:13px;color:var(--k1);font-weight:500}
+.pv{font-size:12px;color:var(--k3);font-weight:500}
+.pt{height:6px;background:var(--c2);border-radius:6px;overflow:hidden}
+.pf{height:100%;border-radius:6px;transition:width 1.8s cubic-bezier(.34,1.2,.64,1)}
+
+/* ══════════════════════
+   COMPARISON BARS
+══════════════════════ */
+.cmp{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.cl{font-size:12px;color:var(--k3);width:110px;flex-shrink:0;font-weight:500}
+.ct{flex:1;background:var(--c2);border-radius:5px;height:8px;overflow:hidden}
+.cf{height:100%;border-radius:5px;transition:width 1.8s cubic-bezier(.34,1.2,.64,1)}
+.cy{background:linear-gradient(90deg,var(--sg-l),var(--sg))}
+.ca{background:linear-gradient(90deg,var(--lv-p),var(--lv))}
+.cn{font-size:12px;font-weight:600;color:var(--k2);width:24px;text-align:right;flex-shrink:0}
+
+/* ══════════════════════
+   FORMS
+══════════════════════ */
+.fld{margin-bottom:16px}
+.flbl{display:block;font-size:11.5px;font-weight:700;color:var(--k2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px}
+.fin,.fsl,.fta{
+  width:100%;background:var(--c1);border:1px solid var(--b1);
+  border-radius:var(--r4);padding:10px 14px;
+  color:var(--k0);font-family:var(--fb);font-size:14px;
+  transition:all .18s;outline:none;appearance:none;line-height:1.5;
+}
+.fin:focus,.fsl:focus,.fta:focus{border-color:var(--sg-l);background:white;box-shadow:0 0 0 3px rgba(107,143,113,.12)}
+.fin::placeholder,.fta::placeholder{color:var(--k4)}
+.fsl option{background:white}
+.fta{resize:vertical;min-height:90px}
+
+/* range */
+.rng{margin-bottom:16px}
+.rng-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rng-v{font-family:var(--fd);font-size:14px;font-weight:500;color:var(--sg-d)}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:5px;background:var(--c2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:white;border:2.5px solid var(--sg);cursor:pointer;box-shadow:0 1px 5px rgba(107,143,113,.28);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+
+/* ══════════════════════
+   CHAT
+══════════════════════ */
+.cs{display:flex;flex-direction:column;height:520px;background:white;border:1px solid var(--b0);border-radius:var(--r8);overflow:hidden;box-shadow:var(--s3)}
+.ch{padding:14px 18px;border-bottom:1px solid var(--b0);background:var(--c1);display:flex;align-items:center;gap:12px}
+.ca2{width:38px;height:38px;background:linear-gradient(135deg,var(--sg-l),var(--sg));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.chi{flex:1}
+.chn{font-size:14px;font-weight:600;color:var(--k0);font-family:var(--fd)}
+.chs{font-size:11.5px;color:var(--sg);font-weight:600;display:flex;align-items:center;gap:5px}
+
+.cm{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--c0)}
+
+.msg{max-width:76%;animation:mi .26s ease}
+@keyframes mi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.mu{align-self:flex-end}.ma{align-self:flex-start}
+.mb{padding:11px 15px;border-radius:16px;font-size:13.5px;line-height:1.58}
+.mu .mb{background:var(--sg);color:white;border-bottom-right-radius:4px}
+.ma .mb{background:white;border:1px solid var(--b0);color:var(--k1);border-bottom-left-radius:4px;box-shadow:var(--s1)}
+.mt{font-size:10px;color:var(--k4);margin-top:3px;font-weight:500}
+.mu .mt{text-align:right}
+
+.typing{display:none;align-items:center;gap:4px;padding:11px 15px;background:white;border:1px solid var(--b0);border-radius:16px;border-bottom-left-radius:4px;width:fit-content;box-shadow:var(--s1)}
+.typing.on{display:flex}
+.td{width:6px;height:6px;background:var(--k3);border-radius:50%;animation:tdb 1.2s infinite}
+.td:nth-child(2){animation-delay:.18s}.td:nth-child(3){animation-delay:.36s}
+@keyframes tdb{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+.cf2{padding:12px 14px;border-top:1px solid var(--b0);display:flex;gap:9px;background:white}
+.cin{flex:1;background:var(--c1);border:1px solid var(--b1);border-radius:var(--r4);padding:10px 14px;font-family:var(--fb);font-size:13.5px;color:var(--k0);outline:none;transition:border-color .18s}
+.cin:focus{border-color:var(--sg-l);background:white}
+.csend{width:40px;height:40px;background:var(--sg);border:none;border-radius:var(--r4);color:white;font-size:16px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(107,143,113,.3)}
+.csend:hover{background:var(--sg-d);transform:scale(1.05)}
+.vbtn{width:40px;height:40px;background:var(--c1);border:1px solid var(--b1);border-radius:var(--r4);color:var(--k2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.vbtn:hover{background:var(--sg-p);color:var(--sg);border-color:var(--sg-l)}
+.vbtn.rec{background:var(--rs-p);color:var(--rs);border-color:rgba(192,118,128,.3);animation:rp 1s infinite}
+@keyframes rp{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px rgba(192,118,128,.15)}}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{padding:5px 12px;border-radius:var(--rp);font-size:12.5px;border:1px solid var(--b1);color:var(--k2);cursor:pointer;transition:all .18s;background:white;font-weight:500}
+.chip:hover{border-color:var(--sg-l);color:var(--sg-d);background:var(--sg-p)}
+
+/* ══════════════════════
+   TABS
+══════════════════════ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--b0);margin-bottom:22px}
+.tab{padding:9px 18px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--k3);border-bottom:2px solid transparent;transition:all .18s;margin-bottom:-1px}
+.tab:hover{color:var(--k0)}
+.tab.on{color:var(--sg-d);border-bottom-color:var(--sg)}
+.tp{display:none;animation:pgIn .25s ease}.tp.on{display:block}
+
+/* ══════════════════════
+   NOTICE / DISCLAIMER
+══════════════════════ */
+.note{display:flex;gap:9px;align-items:flex-start;background:var(--am-p);border:1px solid rgba(196,154,60,.22);border-radius:var(--r4);padding:11px 14px;font-size:12px;color:#6b4f0e;line-height:1.55}
+
+/* divider */
+.dv{height:1px;background:var(--b0);margin:16px 0}
+
+/* spinner */
+.spin{width:14px;height:14px;border:2px solid rgba(107,143,113,.22);border-top-color:var(--sg);border-radius:50%;animation:sp .6s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ══════════════════════
+   TOAST
+══════════════════════ */
+.toast{position:fixed;bottom:26px;right:26px;background:white;border:1px solid var(--b0);border-radius:var(--r8);padding:14px 18px;max-width:318px;box-shadow:var(--s4);z-index:9999;display:none;gap:12px;align-items:flex-start}
+.toast.on{display:flex;animation:ti .32s cubic-bezier(.22,.61,.36,1)}
+@keyframes ti{from{transform:translateX(28px);opacity:0}to{transform:translateX(0);opacity:1}}
+.t-ic{font-size:20px;flex-shrink:0;margin-top:1px}
+.t-t{font-size:13.5px;font-weight:700;color:var(--k0);margin-bottom:2px}
+.t-b{font-size:12.5px;color:var(--k3);line-height:1.45}
+
+/* ══════════════════════
+   MOBILE HEADER
+══════════════════════ */
+.mob{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:white;border-bottom:1px solid var(--b0);padding:0 16px;align-items:center;justify-content:space-between;z-index:200;box-shadow:var(--s1)}
+.ham{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:6px;width:36px}
+.ham span{height:1.5px;background:var(--k1);border-radius:2px;display:block;transition:all .2s}
+
+/* ══════════════════════
+   HOME HERO
+══════════════════════ */
+.hero{
+  padding:0 48px;margin:-80px -48px 0;
+  min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(160deg,var(--c0) 0%,var(--c1) 50%,var(--sg-p) 100%);
+  border-bottom:1px solid var(--b0);position:relative;overflow:hidden;
+  padding-top:100px;
+}
+.hero::before{content:'';position:absolute;right:-60px;top:-80px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(107,143,113,.07) 0%,transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;left:26%;bottom:-110px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(193,125,94,.055) 0%,transparent 60%);pointer-events:none}
+
+.hi{max-width:680px;position:relative;z-index:1}
+
+.h-ey{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;color:var(--sg-d);letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
+.h-ey-ln{width:28px;height:1.5px;background:var(--sg)}
+
+.h-h1{font-family:var(--fd);font-size:clamp(36px,4.4vw,56px);font-weight:500;line-height:1.1;letter-spacing:-.024em;color:var(--k0);margin-bottom:20px}
+.h-h1 em{font-style:italic;color:var(--sg-d)}
+.h-h1 .soft{color:var(--k2);font-weight:400}
+
+.h-p{font-size:16.5px;color:var(--k2);line-height:1.72;max-width:500px;margin-bottom:34px;font-weight:300}
+.h-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:50px}
+
+.h-stats{display:flex;gap:40px;padding-top:38px;border-top:1px solid var(--b0);flex-wrap:wrap}
+.hs-n{font-family:var(--fd);font-size:29px;font-weight:500;color:var(--k0);letter-spacing:-.02em}
+.hs-l{font-size:12px;color:var(--k3);font-weight:500;margin-top:2px}
+
+.feats{padding:54px 48px;margin:0 -48px;background:white;border-top:1px solid var(--b0)}
+.f-ey{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sg);margin-bottom:9px}
+.f-h{font-family:var(--fd);font-size:29px;font-weight:500;color:var(--k0);margin-bottom:36px;letter-spacing:-.02em}
+.f-h em{font-style:italic;color:var(--k2)}
+
+.fc{padding:22px;border:1px solid var(--b0);border-radius:var(--r8);background:var(--c0);cursor:pointer;transition:all .22s}
+.fc:hover{background:white;box-shadow:var(--s3);transform:translateY(-2px);border-color:rgba(107,143,113,.2)}
+.fc-ico{width:42px;height:42px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:13px}
+.fc-n{font-family:var(--fd);font-size:14.5px;font-weight:600;margin-bottom:7px;color:var(--k0)}
+.fc-d{font-size:13px;color:var(--k3);line-height:1.6}
+.fc-a{font-size:12px;font-weight:700;color:var(--sg);margin-top:12px;display:flex;align-items:center;gap:4px}
+
+/* routine */
+.ri{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--b0);align-items:flex-start}
+.ri:last-child{border-bottom:none}
+.ri-tc{width:60px;flex-shrink:0;padding-top:1px}
+.ri-tm{font-size:11.5px;font-weight:700;color:var(--sg-d)}
+.ri-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ri-b{flex:1}
+.ri-t{font-size:13.5px;font-weight:600;color:var(--k0);margin-bottom:2px}
+.ri-d{font-size:12.5px;color:var(--k3);line-height:1.5}
+.ri-du{font-size:11px;font-weight:700;color:var(--k4);margin-top:4px}
+
+/* predictions */
+.pi{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--b0);align-items:flex-start}
+.pi:last-child{border-bottom:none}
+.pi-ic{width:38px;height:38px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pi-b{flex:1}
+.pi-n{font-size:13.5px;font-weight:600;color:var(--k0);margin-bottom:3px}
+.pi-d{font-size:12.5px;color:var(--k3);line-height:1.5}
+.pi-w{font-size:11.5px;font-weight:700;margin-top:5px}
+
+/* reports */
+.rr{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:var(--r6);cursor:pointer;transition:all .18s;border:1px solid transparent;margin-bottom:5px}
+.rr:hover{background:var(--c1);border-color:var(--b0)}
+.rr-ic{width:40px;height:40px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--c1);border:1px solid var(--b0)}
+.rr-n{font-size:13.5px;font-weight:600;color:var(--k0);margin-bottom:2px}
+.rr-m{font-size:11.5px;color:var(--k3)}
+.rr-s{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--sg-d)}
+
+/* ══════════════════════
+   RESPONSIVE
+══════════════════════ */
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.g21,.g13{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .pg{padding:72px 16px 28px}
+  .nav-drop{right:12px;left:12px;width:auto}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .hero{padding:0 16px;margin:-80px -16px 0;min-height:auto;padding-top:96px;padding-bottom:44px}
+  .feats{padding:38px 16px;margin:0 -16px}
+  .h-stats{gap:24px}
+  .cs{height:440px}
+  .topbar{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ AUTH WALL ══════════ -->
+<div class="auth-wall" id="auth-wall">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark" style="width:36px;height:36px">
+        <svg viewBox="0 0 24 24"><path d="M12 2C9.5 2 7 4.5 7 8c0 2 .8 3.8 2 5l-1 9h8l-1-9c1.2-1.2 2-3 2-5 0-3.5-2.5-6-5-6z"/></svg>
+      </div>
+      <div>
+        <div class="logo-name" style="font-size:18px">Health<em>Core</em></div>
+        <div class="logo-tag">Wellness Intelligence</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab on" onclick="switchAuthTab('login')">Sign In</div>
+      <div class="auth-tab" onclick="switchAuthTab('signup')">Create Account</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form on" id="form-login">
+      <div class="demo-badge">
+        <span>💡</span>
+        <span><b>Demo accounts:</b> Try <b>alex@healthcore.ai</b> / <b>pass123</b> or <b>priya@healthcore.ai</b> / <b>pass123</b> — or create your own account.</span>
+      </div>
+      <div class="auth-err" id="login-err">Incorrect email or password. Please try again.</div>
+      <div class="auth-field">
+        <label class="auth-label">Email Address</label>
+        <input class="auth-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign In to HealthCore</button>
+      <div class="auth-note">Your data is encrypted and never shared.</div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="auth-form" id="form-signup">
+      <div class="auth-err" id="signup-err">Account with this email already exists.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="auth-field">
+          <label class="auth-label">First Name</label>
+          <input class="auth-input" id="su-fname" type="text" placeholder="Alex">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Last Name</label>
+          <input class="auth-input" id="su-lname" type="text" placeholder="Jordan">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email Address</label>
+        <input class="auth-input" id="su-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="su-pass" type="password" placeholder="At least 6 characters" onkeydown="if(event.key==='Enter')doSignup()">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Age Group</label>
+        <select class="auth-input" id="su-age">
+          <option value="">Select…</option>
+          <option>18–24</option><option>25–30</option><option>30–35</option><option selected>35–40</option><option>40–45</option><option>45–55</option><option>55+</option>
+        </select>
+      </div>
+      <button class="auth-btn" id="signup-btn" onclick="doSignup()">Create My Account</button>
+      <div class="auth-note">Free forever. No credit card required.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-ic" id="t-ic">🌿</div>
+  <div><div class="t-t" id="t-t">Welcome back</div><div class="t-b" id="t-b">Your health awaits.</div></div>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C9.5 2 7 4.5 7 8c0 2 .8 3.8 2 5l-1 9h8l-1-9c1.2-1.2 2-3 2-5 0-3.5-2.5-6-5-6z"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">Health<em>Core</em></div>
+      <div class="logo-tag">Wellness Intelligence</div>
+    </div>
+  </div>
+
+  <!-- current page pill -->
+  <div id="cur-page" style="font-size:13px;font-weight:600;color:var(--k2);display:flex;align-items:center;gap:7px">
+    <span id="cur-ic">🏡</span><span id="cur-nm">Home</span>
+  </div>
+
+  <!-- three-dot button -->
+  <button class="dots-btn" id="dots-btn" onclick="tgNav()" aria-label="Open menu">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+  </button>
+</header>
+
+<!-- BACKDROP -->
+<div class="nav-backdrop" id="nav-backdrop" onclick="closeNav()"></div>
+
+<!-- NAV DROPDOWN -->
+<div class="nav-drop" id="nav-drop">
+  <!-- user strip -->
+  <div class="nd-user" onclick="nav('profile',null);closeNav()">
+    <div class="u-av" id="nav-av">AJ</div>
+    <div>
+      <div class="u-nm" id="nav-uname">Alex Jordan</div>
+      <div class="u-pl">✦ Core Member</div>
+    </div>
+    <div style="margin-left:auto;font-size:11px;color:var(--k4)">→</div>
+  </div>
+  <div style="padding:0 4px 8px;border-bottom:1px solid var(--b0);margin-bottom:7px">
+    <button onclick="doLogout()" style="width:100%;padding:7px 10px;border:1px solid rgba(192,118,128,.22);background:var(--rs-p);color:#7a3e48;border-radius:var(--r4);font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .18s" onmouseover="this.style.background='#e8c8cc'" onmouseout="this.style.background='var(--rs-p)'">
+      <span>🚪</span> Sign Out
+    </button>
+  </div>
+
+  <div class="nd-lbl">Overview</div>
+  <div class="ni on" onclick="nav('home',this);closeNav()"><span class="ni-ic">🏡</span>Home</div>
+  <div class="ni" onclick="nav('dashboard',this);closeNav()"><span class="ni-ic">📊</span>Dashboard</div>
+  <div class="ni" onclick="nav('doctor',this);closeNav()"><span class="ni-ic">🌿</span>AI Doctor<span class="ni-badge">AI</span></div>
+  <div class="ni" onclick="nav('reports',this);closeNav()"><span class="ni-ic">📋</span>Reports</div>
+
+  <div class="nd-lbl">Tools</div>
+  <div class="ni" onclick="nav('score',this);closeNav()"><span class="ni-ic">💚</span>Health Score</div>
+  <div class="ni" onclick="nav('symptoms',this);closeNav()"><span class="ni-ic">🔍</span>Symptom Check</div>
+  <div class="ni" onclick="nav('routine',this);closeNav()"><span class="ni-ic">☀️</span>Daily Routine</div>
+  <div class="ni" onclick="nav('predict',this);closeNav()"><span class="ni-ic">🔮</span>Predictions</div>
+
+  <div class="nd-lbl">You</div>
+  <div class="ni" onclick="nav('timetable',this);closeNav()"><span class="ni-ic">📅</span>My Timetable</div>
+  <div class="ni" onclick="nav('profile',this);closeNav()"><span class="ni-ic">👤</span>Profile</div>
+
+  <!-- tokens -->
+  <div class="nd-tok">
+    <div class="tok">
+      <div class="tok-r"><span class="tok-lbl">Daily Tokens</span><span class="tok-n" id="tn">47</span></div>
+      <div class="tok-tr"><div class="tok-fi" id="tb2" style="width:47%"></div></div>
+      <div class="tok-m">Resets in <span id="tr">—</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="app-wrapper">
+<div class="shell">
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+
+<!-- ════ HOME ════ -->
+<div id="page-home" class="pg on">
+  <div class="hero">
+    <div class="hi">
+      <div class="h-ey"><span class="h-ey-ln"></span>Preventive Wellness Platform</div>
+      <h1 class="h-h1">Know your health<br><em>before</em> it <span class="soft">breaks down</span></h1>
+      <p class="h-p">HealthCore weaves AI intelligence with daily wellness rituals — helping you understand your body, predict risks early, and live with greater intention.</p>
+      <div class="h-cta">
+        <button class="btn b-sg" onclick="nav('score',null)" style="padding:12px 26px;font-size:14.5px">Get Health Score →</button>
+        <button class="btn b-ol" onclick="nav('symptoms',null)" style="padding:12px 22px;font-size:14.5px">Start Free Scan</button>
+      </div>
+      <div class="h-stats">
+        <div><div class="hs-n">98.4%</div><div class="hs-l">Prediction accuracy</div></div>
+        <div><div class="hs-n">2.4M+</div><div class="hs-l">Profiles analyzed</div></div>
+        <div><div class="hs-n">ISO 27001</div><div class="hs-l">Privacy certified</div></div>
+        <div><div class="hs-n">&lt;0.3s</div><div class="hs-l">AI response time</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feats">
+    <div class="f-ey">Everything you need</div>
+    <div class="f-h">Your complete wellness <em>intelligence suite</em></div>
+    <div class="g3">
+      <div class="fc" onclick="nav('score',null)">
+        <div class="fc-ico" style="background:var(--sg-p)">💚</div>
+        <div class="fc-n">AI Health Score</div>
+        <div class="fc-d">Daily 0–100 wellness rating calibrated to your sleep, diet, activity and stress.</div>
+        <div class="fc-a">Calculate now →</div>
+      </div>
+      <div class="fc" onclick="nav('symptoms',null)">
+        <div class="fc-ico" style="background:var(--tr-p)">🔍</div>
+        <div class="fc-n">Symptom Check</div>
+        <div class="fc-d">Describe what you're feeling — receive AI condition insights with probability analysis.</div>
+        <div class="fc-a" style="color:var(--tr)">Analyze now →</div>
+      </div>
+      <div class="fc" onclick="nav('routine',null)">
+        <div class="fc-ico" style="background:var(--lv-p)">☀️</div>
+        <div class="fc-n">Smart Routine</div>
+        <div class="fc-d">A complete daily plan covering diet, movement, sleep windows and mental wellness.</div>
+        <div class="fc-a" style="color:var(--lv)">Build routine →</div>
+      </div>
+      <div class="fc" onclick="nav('doctor',null)">
+        <div class="fc-ico" style="background:var(--am-p)">🌿</div>
+        <div class="fc-n">AI Doctor Chat</div>
+        <div class="fc-d">Talk to Dr. Aura — your empathetic AI health guide — via text or voice, any time.</div>
+        <div class="fc-a" style="color:var(--am)">Open chat →</div>
+      </div>
+      <div class="fc" onclick="nav('dashboard',null)">
+        <div class="fc-ico" style="background:var(--sg-p)">📊</div>
+        <div class="fc-n">Live Dashboard</div>
+        <div class="fc-d">Real-time tracking of steps, calories, sleep and activity with elegant visuals.</div>
+        <div class="fc-a">View live →</div>
+      </div>
+      <div class="fc" onclick="nav('predict',null)">
+        <div class="fc-ico" style="background:var(--rs-p)">🔮</div>
+        <div class="fc-n">Risk Prediction</div>
+        <div class="fc-d">AI surfaces emerging health risks weeks before symptoms appear.</div>
+        <div class="fc-a" style="color:var(--rs)">See risks →</div>
+      </div>
+      <div class="fc" onclick="nav('timetable',null)">
+        <div class="fc-ico" style="background:var(--lv-p)">📅</div>
+        <div class="fc-n">My Timetable</div>
+        <div class="fc-d">Build and manage your personal daily schedule — unique to your account, saved privately.</div>
+        <div class="fc-a" style="color:var(--lv)">Open schedule →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:30px"><span>⚠</span><span><strong>Medical Disclaimer —</strong> HealthCore is an AI wellness tool for informational purposes only. It does not constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for health concerns.</span></div>
+</div>
+
+<!-- ════ DASHBOARD ════ -->
+<div id="page-dashboard" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Dashboard</div><div class="tb-s">Tuesday, April 22, 2026 · Live sync active</div></div>
+    <div class="tb-r"><span class="pill p-sg"><span class="ldot"></span>Live</span><button class="btn b-ol b-sm">Export</button></div>
+  </div>
+
+  <div class="g4 mb20">
+    <div class="metric"><div class="m-ico" style="background:var(--sg-p)">🚶</div><div><span class="m-v">8,432</span><span class="m-u">steps</span></div><div class="m-n">Daily Steps</div><div class="m-c up">↑ 12% vs yesterday</div></div>
+    <div class="metric"><div class="m-ico" style="background:var(--tr-p)">🔥</div><div><span class="m-v" style="color:var(--tr)">1,847</span><span class="m-u">kcal</span></div><div class="m-n">Calories Burned</div><div class="m-c up">↑ 8% vs yesterday</div></div>
+    <div class="metric"><div class="m-ico" style="background:var(--lv-p)">😴</div><div><span class="m-v" style="color:var(--lv)">7.2</span><span class="m-u">hrs</span></div><div class="m-n">Sleep Quality</div><div class="m-c dn">↓ 5% vs average</div></div>
+    <div class="metric"><div class="m-ico" style="background:var(--rs-p)">❤️</div><div><span class="m-v" style="color:var(--rs)">72</span><span class="m-u">bpm</span></div><div class="m-n">Heart Rate</div><div class="m-c fl">→ Optimal range</div></div>
+  </div>
+
+  <div class="g21 mb20">
+    <div class="card"><div class="sh"><div><div class="sh-t">Weekly Activity</div><div class="sh-s">Steps & active minutes</div></div></div><canvas id="actChart" height="110"></canvas></div>
+    <div class="card c-sg" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px">
+      <div class="sh" style="width:100%;margin-bottom:12px"><div class="sh-t">Today's Score</div></div>
+      <div class="rw" style="margin-bottom:14px">
+        <svg class="rsvg" viewBox="0 0 168 168">
+          <circle class="rt" cx="84" cy="84" r="74"/>
+          <circle class="rf" id="dash-ring" cx="84" cy="84" r="74" stroke="url(#dg)"/>
+          <defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#A8C5AD"/><stop offset="100%" stop-color="#6B8F71"/></linearGradient></defs>
+        </svg>
+        <div class="rc"><div class="rn">78</div><div class="rl">out of 100</div></div>
+      </div>
+      <span class="pill p-sg">Low Risk</span>
+      <div style="font-size:12px;color:var(--k3);margin-top:9px;text-align:center">22% above age group average</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-t">Health Factors</div></div>
+      <div class="prog"><div class="pr"><span class="pn">Sleep Quality</span><span class="pv">72%</span></div><div class="pt"><div class="pf" style="width:72%;background:linear-gradient(90deg,var(--lv-p),var(--lv))"></div></div></div>
+      <div class="prog"><div class="pr"><span class="pn">Physical Activity</span><span class="pv">84%</span></div><div class="pt"><div class="pf" style="width:84%;background:linear-gradient(90deg,var(--sg-p),var(--sg))"></div></div></div>
+      <div class="prog"><div class="pr"><span class="pn">Diet & Nutrition</span><span class="pv">65%</span></div><div class="pt"><div class="pf" style="width:65%;background:linear-gradient(90deg,var(--am-p),var(--am))"></div></div></div>
+      <div class="prog"><div class="pr"><span class="pn">Stress Management</span><span class="pv">55%</span></div><div class="pt"><div class="pf" style="width:55%;background:linear-gradient(90deg,var(--rs-p),var(--rs))"></div></div></div>
+      <div class="prog"><div class="pr"><span class="pn">Hydration</span><span class="pv">78%</span></div><div class="pt"><div class="pf" style="width:78%;background:linear-gradient(90deg,#cce8f4,#5ba8cc)"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-t">Age Group Comparison</div></div>
+      <div style="display:flex;gap:18px;margin-bottom:16px;font-size:12px;color:var(--k3)">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:4px;background:var(--sg);display:inline-block;border-radius:2px"></span>You</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:4px;background:var(--lv);display:inline-block;border-radius:2px;opacity:.5"></span>Age Avg</span>
+      </div>
+      <div class="cmp"><span class="cl">Overall</span><div class="ct"><div class="cf cy" style="width:78%"></div></div><span class="cn" style="color:var(--sg-d)">78</span></div>
+      <div class="cmp"><span class="cl">Fitness</span><div class="ct"><div class="cf cy" style="width:84%"></div></div><span class="cn" style="color:var(--sg-d)">84</span></div>
+      <div class="cmp"><span class="cl">Avg Overall</span><div class="ct"><div class="cf ca" style="width:64%"></div></div><span class="cn" style="color:var(--lv)">64</span></div>
+      <div class="cmp"><span class="cl">Avg Fitness</span><div class="ct"><div class="cf ca" style="width:58%"></div></div><span class="cn" style="color:var(--lv)">58</span></div>
+      <div style="margin-top:14px;padding:11px 13px;background:var(--sg-m);border:1px solid rgba(107,143,113,.16);border-radius:var(--r4);font-size:12.5px;color:var(--sg-d)">🌿 You score <strong>22% higher</strong> than your age group. Your consistency is showing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ AI DOCTOR ════ -->
+<div id="page-doctor" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">AI Doctor</div><div class="tb-s">Dr. Aura — Your empathetic health guide</div></div>
+    <div class="tb-r">
+      <button class="btn b-ol b-sm" id="vt" onclick="tgVoice()">🎙 Voice Mode</button>
+      <button class="btn b-gh b-sm" onclick="clrChat()">Clear</button>
+    </div>
+  </div>
+  <div class="g13">
+    <div>
+      <div class="cs">
+        <div class="ch">
+          <div class="ca2">🌿</div>
+          <div class="chi"><div class="chn">Dr. Aura</div><div class="chs"><span class="ldot"></span>Available · Wellness AI</div></div>
+          <span class="pill p-sg" style="margin-left:auto;font-size:10.5px">AI</span>
+        </div>
+        <div class="cm" id="chatMsgs">
+          <div class="msg ma">
+            <div class="mb">Hello, I'm Dr. Aura 🌿 I'm here to listen and help with health questions, explain symptoms, and offer evidence-based wellness guidance.<br><br>What's on your mind today?</div>
+            <div class="mt">Dr. Aura · Just now</div>
+          </div>
+        </div>
+        <div class="cf2">
+          <button class="vbtn" id="vBtn" onclick="startVoice()">🎙</button>
+          <input class="cin" id="chatIn" placeholder="Ask Dr. Aura anything…" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="csend" onclick="sendMsg()">→</button>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip" onclick="qc('I have a headache and feel tired')">Headache & fatigue</div>
+        <div class="chip" onclick="qc('What foods boost immunity?')">Boost immunity</div>
+        <div class="chip" onclick="qc('How can I reduce stress naturally?')">Stress relief</div>
+        <div class="chip" onclick="qc('I haven\'t been sleeping well')">Sleep issues</div>
+        <div class="chip" onclick="qc('What is my health risk this week?')">Weekly risk</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card c-sg">
+        <div class="sh" style="margin-bottom:13px"><div class="sh-t">Quick Vitals</div></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b0)"><span style="font-size:13px;color:var(--k2)">Heart Rate</span><span style="font-size:13px;font-weight:700;color:var(--rs)">72 bpm</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b0)"><span style="font-size:13px;color:var(--k2)">Blood Pressure</span><span style="font-size:13px;font-weight:700;color:var(--sg-d)">120/80</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b0)"><span style="font-size:13px;color:var(--k2)">SpO₂</span><span style="font-size:13px;font-weight:700;color:var(--sg-d)">98%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0"><span style="font-size:13px;color:var(--k2)">BMI</span><span style="font-size:13px;font-weight:700;color:var(--am)">23.4</span></div>
+      </div>
+      <div class="card">
+        <div class="sh-t" style="margin-bottom:12px">Session</div>
+        <div style="font-size:13px;color:var(--k3);line-height:2.1">Messages: <strong style="color:var(--k1)" id="mcnt">1</strong><br>Tokens used: <strong style="color:var(--sg-d)" id="tu">0</strong><br>Duration: <strong style="color:var(--k1)" id="st">00:00</strong></div>
+      </div>
+      <div class="note"><span>⚠</span><span>Dr. Aura is an AI — not a licensed physician. In emergencies, call 911 or your local emergency service immediately.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ HEALTH SCORE ════ -->
+<div id="page-score" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Health Score</div><div class="tb-s">Your daily wellness index, powered by AI</div></div>
+    <div class="tb-r"><span style="font-size:12px;color:var(--k3)">🪙 3 tokens</span></div>
+  </div>
+  <div class="g13">
+    <div class="card">
+      <div class="sh"><div class="sh-t">Today's Inputs</div></div>
+      <div class="rng"><div class="rng-h"><label class="flbl" style="margin:0">Sleep Hours</label><span class="rng-v" id="sv">7h</span></div><input type="range" min="0" max="12" value="7" step=".5" oninput="document.getElementById('sv').textContent=this.value+'h'" id="si"></div>
+      <div class="rng"><div class="rng-h"><label class="flbl" style="margin:0">Diet Quality</label><span class="rng-v" id="dv">6 / 10</span></div><input type="range" min="0" max="10" value="6" oninput="document.getElementById('dv').textContent=this.value+' / 10'" id="di"></div>
+      <div class="rng"><div class="rng-h"><label class="flbl" style="margin:0">Physical Activity</label><span class="rng-v" id="av">5 / 10</span></div><input type="range" min="0" max="10" value="5" oninput="document.getElementById('av').textContent=this.value+' / 10'" id="ai"></div>
+      <div class="rng"><div class="rng-h"><label class="flbl" style="margin:0">Stress Level</label><span class="rng-v" id="stv" style="color:var(--rs)">4 / 10</span></div><input type="range" min="0" max="10" value="4" oninput="document.getElementById('stv').textContent=this.value+' / 10'" id="sti"></div>
+      <div class="fld"><label class="flbl">Symptoms (optional)</label><input type="text" class="fin" placeholder="e.g., mild headache, fatigue" id="sy-i"></div>
+      <button class="btn b-sg b-fw" onclick="calcScore()" id="sc-b" style="padding:12px">Calculate Score →</button>
+    </div>
+    <div class="card c-sg">
+      <div class="sh"><div class="sh-t">Your Score</div></div>
+      <div id="sc-r" style="display:flex;flex-direction:column;align-items:center;padding:28px 0">
+        <div style="text-align:center;color:var(--k4)"><div style="font-size:52px;opacity:.28;margin-bottom:10px">💚</div><div style="font-size:14px">Fill in your inputs to see today's score</div></div>
+      </div>
+      <div id="sc-d" style="display:none">
+        <div class="dv"></div>
+        <div class="sh-t" style="margin-bottom:13px;font-size:14px">Factor Breakdown</div>
+        <div id="sc-f"></div>
+        <div id="sc-t" style="margin-top:15px;padding:13px;background:rgba(107,143,113,.07);border:1px solid rgba(107,143,113,.15);border-radius:var(--r4)">
+          <div style="font-size:12px;font-weight:700;color:var(--sg-d);margin-bottom:7px">Improvement suggestions</div>
+          <div id="tips" style="font-size:13px;color:var(--k2);line-height:2.1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SYMPTOMS ════ -->
+<div id="page-symptoms" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Symptom Check</div><div class="tb-s">AI-powered condition analysis — not a diagnosis</div></div>
+    <div class="tb-r"><span style="font-size:12px;color:var(--k3)">🪙 5 tokens</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-t">Patient Profile</div></div>
+      <div class="fld"><label class="flbl">Age Group</label><select class="fsl" id="ag"><option value="">Select age range</option><option>15–20</option><option>20–25</option><option>25–30</option><option>30–35</option><option>35–40</option><option>40–45</option><option>45–50</option><option>50–55</option><option>55–60</option><option>60+</option></select></div>
+      <div class="g2" style="gap:12px">
+        <div class="fld" style="margin-bottom:0"><label class="flbl">Weight (kg)</label><input type="number" class="fin" placeholder="70" id="wi"></div>
+        <div class="fld" style="margin-bottom:0"><label class="flbl">Height (cm)</label><input type="number" class="fin" placeholder="175" id="hi2"></div>
+      </div>
+      <div style="margin-bottom:16px"></div>
+      <div class="fld"><label class="flbl">Profession</label><select class="fsl" id="pr"><option value="">Select profession</option><option>Software Engineer</option><option>Healthcare Worker</option><option>Teacher</option><option>Driver / Delivery</option><option>Office Worker</option><option>Construction</option><option>Student</option><option>Retired</option><option>Other</option></select></div>
+      <div class="fld"><label class="flbl">Lifestyle</label><select class="fsl" id="ls"><option value="">Select lifestyle</option><option>Sedentary (mostly sitting)</option><option>Lightly active</option><option>Moderately active (3×/week)</option><option>Very active (5+ days/week)</option><option>Athlete</option></select></div>
+      <div class="fld"><label class="flbl">Describe Your Symptoms</label><textarea class="fta" id="sy-t" placeholder="Be specific — e.g., sharp chest tightness for 2 days, shortness of breath, dizziness when standing…"></textarea></div>
+      <div class="fld"><label class="flbl">Duration</label><select class="fsl" id="dr"><option>Less than 24 hours</option><option>1–3 days</option><option>4–7 days</option><option>1–2 weeks</option><option>More than 2 weeks</option></select></div>
+      <button class="btn b-tr b-fw" onclick="analyzeSyms()" id="sy-b" style="padding:12px">Analyze Symptoms →</button>
+    </div>
+    <div>
+      <div class="card c-w">
+        <div class="sh"><div class="sh-t">AI Analysis</div></div>
+        <div id="sy-r"><div style="text-align:center;color:var(--k4);padding:40px 20px"><div style="font-size:44px;opacity:.28;margin-bottom:10px">🔍</div><div style="font-size:14px">Enter your profile and symptoms to receive an analysis</div></div></div>
+      </div>
+      <div class="note" style="margin-top:13px"><span>⚠</span><span>AI analysis only — not a medical diagnosis. Consult a healthcare professional for proper evaluation and treatment.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ROUTINE ════ -->
+<div id="page-routine" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Daily Routine</div><div class="tb-s">AI-crafted wellness schedule tailored to you</div></div>
+    <div class="tb-r"><span style="font-size:12px;color:var(--k3)">🪙 4 tokens</span></div>
+  </div>
+  <div class="g2 mb20">
+    <div class="card">
+      <div class="sh"><div class="sh-t">Preferences</div></div>
+      <div class="fld"><label class="flbl">Primary Goal</label><select class="fsl" id="rg"><option>General Wellness</option><option>Weight Loss</option><option>Muscle Gain</option><option>Stress Reduction</option><option>Better Sleep</option><option>Cardiovascular Health</option></select></div>
+      <div class="fld"><label class="flbl">Available Time / Day</label><select class="fsl" id="rt"><option>30 minutes</option><option>1 hour</option><option>1.5 hours</option><option>2+ hours</option></select></div>
+      <div class="fld"><label class="flbl">Fitness Level</label><select class="fsl" id="rf"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+      <div class="fld"><label class="flbl">Diet Style</label><select class="fsl" id="rd"><option>No Preference</option><option>Vegetarian</option><option>Vegan</option><option>Keto</option><option>Mediterranean</option></select></div>
+      <button class="btn b-sg b-fw" onclick="genRoutine()" id="r-b" style="padding:12px">Generate My Routine →</button>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-t">Today's Plan</div></div>
+      <div id="r-r"><div style="text-align:center;color:var(--k4);padding:34px 20px"><div style="font-size:42px;opacity:.28;margin-bottom:10px">☀️</div><div style="font-size:14px">Set your preferences and generate a routine</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PREDICTIONS ════ -->
+<div id="page-predict" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Health Predictions</div><div class="tb-s">AI risk forecasting from your patterns</div></div>
+    <div class="tb-r"><span style="font-size:12px;color:var(--k3)">🪙 8 tokens</span><button class="btn b-ol b-sm" onclick="rfrPred()">↻ Refresh</button></div>
+  </div>
+  <div class="g2 mb20">
+    <div class="card"><div class="sh"><div><div class="sh-t">Risk Timeline</div><div class="sh-s">Next 60 days</div></div></div><canvas id="riskChart" height="160"></canvas></div>
+    <div class="card c-w">
+      <div class="sh"><div class="sh-t">AI Signals</div></div>
+      <div class="pi"><div class="pi-ic" style="background:var(--am-p)">⚡</div><div class="pi-b"><div class="pi-n">Elevated Stress Risk</div><div class="pi-d">Sleep patterns and activity data suggest stress levels may rise soon.</div><div class="pi-w" style="color:var(--am)">~30 days · High attention</div></div></div>
+      <div class="pi"><div class="pi-ic" style="background:#cce8f438">💧</div><div class="pi-b"><div class="pi-n">Afternoon Dehydration</div><div class="pi-d">Hydration consistently drops 2–4 PM on workdays.</div><div class="pi-w" style="color:#5ba8cc">Daily pattern · Monitor</div></div></div>
+      <div class="pi"><div class="pi-ic" style="background:var(--sg-p)">❤️</div><div class="pi-b"><div class="pi-n">Improving Cardiovascular</div><div class="pi-d">Daily walking habit shows a strong positive trajectory for heart health.</div><div class="pi-w" style="color:var(--sg-d)">Ongoing · Keep it up</div></div></div>
+      <div class="pi"><div class="pi-ic" style="background:var(--rs-p)">😴</div><div class="pi-b"><div class="pi-n">Sleep Debt Accumulating</div><div class="pi-d">~4.5 hour weekly deficit detected. Chronic fatigue risk rising.</div><div class="pi-w" style="color:var(--rs)">~14 days · Take action</div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-t">60-Day Condition Risk</div></div>
+    <div class="g4">
+      <div style="text-align:center;padding:16px"><div style="font-family:var(--fd);font-size:38px;font-weight:500;color:var(--rs);letter-spacing:-.03em">34%</div><div style="font-size:13px;color:var(--k2);margin-top:4px">Stress Disorder</div><div style="margin-top:7px"><span class="pill p-rs" style="font-size:10px">↑ +8%</span></div></div>
+      <div style="text-align:center;padding:16px;border-left:1px solid var(--b0)"><div style="font-family:var(--fd);font-size:38px;font-weight:500;color:var(--am);letter-spacing:-.03em">21%</div><div style="font-size:13px;color:var(--k2);margin-top:4px">Metabolic Risk</div><div style="margin-top:7px"><span class="pill p-am" style="font-size:10px">→ Stable</span></div></div>
+      <div style="text-align:center;padding:16px;border-left:1px solid var(--b0)"><div style="font-family:var(--fd);font-size:38px;font-weight:500;color:var(--sg);letter-spacing:-.03em">8%</div><div style="font-size:13px;color:var(--k2);margin-top:4px">Cardiovascular</div><div style="margin-top:7px"><span class="pill p-sg" style="font-size:10px">↓ −4%</span></div></div>
+      <div style="text-align:center;padding:16px;border-left:1px solid var(--b0)"><div style="font-family:var(--fd);font-size:38px;font-weight:500;color:var(--lv);letter-spacing:-.03em">15%</div><div style="font-size:13px;color:var(--k2);margin-top:4px">Sleep Disorder</div><div style="margin-top:7px"><span class="pill p-lv" style="font-size:10px">↑ +5%</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ REPORTS ════ -->
+<div id="page-reports" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Reports</div><div class="tb-s">Your AI-generated health history</div></div>
+    <div class="tb-r"><button class="btn b-sg b-sm" onclick="showToast('📄 Exporting','Generating your full report archive…')">Export All</button></div>
+  </div>
+  <div class="tabs">
+    <div class="tab on" onclick="swTab('rpt','history',this)">History</div>
+    <div class="tab" onclick="swTab('rpt','trends',this)">Trends</div>
+    <div class="tab" onclick="swTab('rpt','download',this)">Downloads</div>
+  </div>
+  <div id="rpt-tab-history" class="tp on">
+    <div id="user-reports-list">
+      <!-- populated by renderUserReports() -->
+    </div>
+  </div>
+  <div id="rpt-tab-trends" class="tp">
+    <div class="card"><div class="sh"><div class="sh-t">30-Day Health Score</div></div><canvas id="trendChart" height="120"></canvas></div>
+  </div>
+  <div id="rpt-tab-download" class="tp">
+    <div class="g2">
+      <div class="card c-w" style="cursor:pointer" onclick="showToast('📄 Generating','Monthly PDF report is being created.')">
+        <div style="font-size:32px;margin-bottom:12px">📄</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;margin-bottom:6px">Monthly Report</div>
+        <div style="font-size:13px;color:var(--k3);margin-bottom:18px">April 2026 · AI-Generated PDF</div>
+        <button class="btn b-sg b-sm">Download PDF</button>
+      </div>
+      <div class="card c-w" style="cursor:pointer" onclick="showToast('📊 Preparing','Your data export is being prepared.')">
+        <div style="font-size:32px;margin-bottom:12px">📊</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;margin-bottom:6px">Health Data Export</div>
+        <div style="font-size:13px;color:var(--k3);margin-bottom:18px">All records · CSV format</div>
+        <button class="btn b-tr b-sm">Download CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PROFILE ════ -->
+<div id="page-profile" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">Profile</div><div class="tb-s">Your health background and preferences</div></div>
+    <div class="tb-r"><button class="btn b-sg b-sm" onclick="saveProf()">Save Changes</button></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-t">Personal Information</div></div>
+      <div class="g2" style="gap:12px">
+        <div class="fld"><label class="flbl">First Name</label><input type="text" class="fin" id="prof-fname" value="Alex"></div>
+        <div class="fld"><label class="flbl">Last Name</label><input type="text" class="fin" id="prof-lname" value="Jordan"></div>
+      </div>
+      <div class="fld"><label class="flbl">Age Group</label><select class="fsl"><option>30–35</option><option selected>35–40</option><option>40–45</option></select></div>
+      <div class="g2" style="gap:12px">
+        <div class="fld"><label class="flbl">Weight (kg)</label><input type="number" class="fin" value="74"></div>
+        <div class="fld"><label class="flbl">Height (cm)</label><input type="number" class="fin" value="178"></div>
+      </div>
+      <div class="fld"><label class="flbl">Biological Sex</label><select class="fsl"><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-t">Health Background</div></div>
+      <div class="fld"><label class="flbl">Profession</label><select class="fsl"><option selected>Software Engineer</option><option>Healthcare Worker</option><option>Office Worker</option></select></div>
+      <div class="fld"><label class="flbl">Lifestyle</label><select class="fsl"><option selected>Moderately active (3×/week)</option><option>Sedentary</option><option>Very active</option></select></div>
+      <div class="fld"><label class="flbl">Known Conditions</label><input type="text" class="fin" value="None"></div>
+      <div class="fld"><label class="flbl">Allergies</label><input type="text" class="fin" value="None"></div>
+      <div class="fld"><label class="flbl">Medications</label><input type="text" class="fin" value="None"></div>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-t">Preferences</div></div>
+      <div class="fld"><label class="flbl">Units</label><select class="fsl"><option selected>Metric (kg, cm)</option><option>Imperial (lbs, ft)</option></select></div>
+      <div class="fld"><label class="flbl">Language</label><select class="fsl"><option>English</option><option>Spanish</option><option>French</option></select></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--b0)">
+        <div><div style="font-size:14px;font-weight:500">Daily Reminders</div><div style="font-size:12px;color:var(--k3)">Health notifications</div></div>
+        <div style="width:42px;height:22px;background:var(--sg);border-radius:11px;cursor:pointer;position:relative;box-shadow:0 1px 5px rgba(107,143,113,.38)"><div style="position:absolute;right:2px;top:2px;width:18px;height:18px;background:white;border-radius:50%;box-shadow:var(--s1)"></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--b0)">
+        <div><div style="font-size:14px;font-weight:500">AI Predictions</div><div style="font-size:12px;color:var(--k3)">Future risk analysis</div></div>
+        <div style="width:42px;height:22px;background:var(--sg);border-radius:11px;cursor:pointer;position:relative;box-shadow:0 1px 5px rgba(107,143,113,.38)"><div style="position:absolute;right:2px;top:2px;width:18px;height:18px;background:white;border-radius:50%;box-shadow:var(--s1)"></div></div>
+      </div>
+    </div>
+    <div class="card c-sg">
+      <div class="sh"><div class="sh-t">Privacy & Security</div></div>
+      <div style="padding:13px;background:white;border-radius:var(--r4);margin-bottom:15px;border:1px solid rgba(107,143,113,.15)">
+        <div style="font-size:13px;font-weight:700;color:var(--sg-d);margin-bottom:4px">🔐 Your data stays yours</div>
+        <div style="font-size:12.5px;color:var(--k3);line-height:1.65">AES-256 encryption. Never sold to third parties. HIPAA & GDPR compliant. Delete everything anytime.</div>
+      </div>
+      <div style="font-size:13px;color:var(--k3)">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b0)"><span>Encryption</span><span style="color:var(--sg-d);font-weight:700">AES-256</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b0)"><span>Third-party sharing</span><span style="color:var(--rs);font-weight:700">Never</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0"><span>Member since</span><span id="prof-since" style="font-weight:600">Jan 15, 2026</span></div>
+      </div>
+      <button class="btn b-gh b-sm b-fw" style="margin-top:13px;color:var(--rs);border-color:rgba(192,118,128,.2)" onclick="showToast('🗑 Data Deleted','All health data permanently removed.')">Delete All My Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MY TIMETABLE ════ -->
+<div id="page-timetable" class="pg">
+  <div class="tb">
+    <div><div class="tb-t">My Timetable</div><div class="tb-s">Your personal daily schedule — private to your account</div></div>
+    <div class="tb-r"><span class="pill p-sg"><span class="ldot"></span>Saved locally</span></div>
+  </div>
+
+  <div class="g13">
+    <!-- add entry -->
+    <div>
+      <div class="card mb20">
+        <div class="sh"><div class="sh-t">Add Schedule Entry</div></div>
+        <div class="g2" style="gap:12px">
+          <div class="fld">
+            <label class="flbl">Time</label>
+            <input type="time" class="fin" id="tt-time">
+          </div>
+          <div class="fld">
+            <label class="flbl">Category</label>
+            <select class="fsl" id="tt-cat">
+              <option value="workout">💪 Workout</option>
+              <option value="nutrition">🥗 Nutrition</option>
+              <option value="mental">🧘 Mental</option>
+              <option value="hydration">💧 Hydration</option>
+              <option value="sleep">😴 Sleep</option>
+              <option value="activity">🏃 Activity</option>
+            </select>
+          </div>
+        </div>
+        <div class="fld">
+          <label class="flbl">Title</label>
+          <input type="text" class="fin" id="tt-title" placeholder="e.g. Morning Run">
+        </div>
+        <div class="fld">
+          <label class="flbl">Note (optional)</label>
+          <input type="text" class="fin" id="tt-note-in" placeholder="e.g. 30 min outdoor jog">
+        </div>
+        <button class="btn b-sg b-fw" onclick="addTTItem()">+ Add to Schedule</button>
+      </div>
+
+      <div class="card c-sg">
+        <div class="sh-t" style="margin-bottom:10px">💡 Schedule Tips</div>
+        <div style="font-size:13px;color:var(--k3);line-height:1.7">
+          Build your routine around consistent anchor times. Hydration in the morning, movement before 6 PM, and screens off before 10 PM are the three most impactful changes most people can make.
+        </div>
+      </div>
+    </div>
+
+    <!-- timetable display -->
+    <div class="card">
+      <div class="sh">
+        <div><div class="sh-t">Today's Schedule</div><div class="sh-s">Your personalized daily plan</div></div>
+        <button class="btn b-gh b-sm" onclick="clearTimetable()">Clear All</button>
+      </div>
+      <!-- timetable CSS -->
+      <style>
+        .tt-item{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--b0);transition:background .15s;border-radius:var(--r4)}
+        .tt-item:last-child{border-bottom:none}
+        .tt-time{font-size:12px;font-weight:700;color:var(--sg-d);width:46px;flex-shrink:0;font-family:var(--fd)}
+        .tt-emoji{width:36px;height:36px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .tt-body{flex:1}
+        .tt-title{font-size:14px;font-weight:600;color:var(--k0);margin-bottom:2px}
+        .tt-note{font-size:12px;color:var(--k3)}
+        .tt-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:var(--rp);white-space:nowrap;flex-shrink:0}
+        .tt-del{width:26px;height:26px;border:none;background:transparent;color:var(--k4);cursor:pointer;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+        .tt-del:hover{background:var(--rs-p);color:var(--rs)}
+      </style>
+      <div id="timetable-list"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div><!-- end shell -->
+</div><!-- end app-wrapper -->
+
+<script>
+// ══════════════════════════════════════
+//  AUTH & USER DATA SYSTEM
+// ══════════════════════════════════════
+
+// Seed demo users
+(function seedDemo(){
+  const db=JSON.parse(localStorage.getItem('hc_users')||'{}');
+  if(!db['alex@healthcore.ai']){
+    db['alex@healthcore.ai']={
+      fname:'Alex',lname:'Jordan',email:'alex@healthcore.ai',
+      pass:'pass123',age:'35–40',joined:'Jan 15, 2026',
+      timetable:[
+        {id:'t1',time:'06:00',title:'Morning Hydration',note:'500ml water + lemon',color:'#5ba8cc',emoji:'💧'},
+        {id:'t2',time:'06:30',title:'Morning Run',note:'30 min outdoor jog',color:'#6B8F71',emoji:'🏃'},
+        {id:'t3',time:'08:00',title:'Breakfast',note:'Oats, eggs, green tea',color:'#C49A3C',emoji:'🥗'},
+        {id:'t4',time:'10:00',title:'Mindful Break',note:'5 min breathing exercise',color:'#9B8BB4',emoji:'🧘'},
+        {id:'t5',time:'13:00',title:'Lunch',note:'Balanced meal with protein',color:'#C49A3C',emoji:'🍱'},
+        {id:'t6',time:'17:30',title:'Evening Walk',note:'20 min walk outdoors',color:'#6B8F71',emoji:'🚶'},
+        {id:'t7',time:'22:00',title:'Sleep',note:'No screens 1hr before',color:'#9B8BB4',emoji:'😴'}
+      ],
+      reports:[
+        {id:'r1',date:'Apr 22, 2026',type:'Daily Report',score:78,risk:'Low',detail:'Active day with good hydration.'},
+        {id:'r2',date:'Apr 21, 2026',type:'Daily Report',score:74,risk:'Low',detail:'Slightly low sleep quality detected.'},
+        {id:'r3',date:'Apr 20, 2026',type:'Daily Report',score:69,risk:'Medium',detail:'Stress indicators elevated.'},
+        {id:'r4',date:'Apr 19, 2026',type:'Symptom Analysis',score:null,risk:'Low',detail:'Tension Headache most likely (68%).'},
+        {id:'r5',date:'Apr 15, 2026',type:'Weekly Summary',score:72,risk:'Low',detail:'Avg 72.4/100 for the week.'}
+      ]
+    };
+  }
+  if(!db['priya@healthcore.ai']){
+    db['priya@healthcore.ai']={
+      fname:'Priya',lname:'Sharma',email:'priya@healthcore.ai',
+      pass:'pass123',age:'30–35',joined:'Feb 3, 2026',
+      timetable:[
+        {id:'t1',time:'05:30',title:'Yoga & Meditation',note:'45 min morning practice',color:'#9B8BB4',emoji:'🧘'},
+        {id:'t2',time:'07:00',title:'Breakfast',note:'Smoothie bowl + nuts',color:'#C49A3C',emoji:'🥣'},
+        {id:'t3',time:'12:30',title:'Lunch',note:'Rice, dal, salad',color:'#C49A3C',emoji:'🍛'},
+        {id:'t4',time:'16:00',title:'Afternoon Walk',note:'15 min campus walk',color:'#6B8F71',emoji:'🚶'},
+        {id:'t5',time:'21:00',title:'Wind Down',note:'Reading & herbal tea',color:'#C07680',emoji:'📖'},
+        {id:'t6',time:'22:30',title:'Sleep',note:'Target 7 hours',color:'#9B8BB4',emoji:'😴'}
+      ],
+      reports:[
+        {id:'r1',date:'Apr 22, 2026',type:'Daily Report',score:82,risk:'Low',detail:'Excellent yoga session, great energy.'},
+        {id:'r2',date:'Apr 21, 2026',type:'Daily Report',score:79,risk:'Low',detail:'Good day, slight afternoon fatigue.'},
+        {id:'r3',date:'Apr 18, 2026',type:'Symptom Analysis',score:null,risk:'Low',detail:'Mild fatigue likely due to dehydration.'}
+      ]
+    };
+  }
+  localStorage.setItem('hc_users',JSON.stringify(db));
+})();
+
+let currentUser = null;
+let tokens=47,mCount=0,tokU=0,sesS=Date.now(),voiceOn=false,recog=null;
+
+// ── AUTH HELPERS ──
+function getUsers(){return JSON.parse(localStorage.getItem('hc_users')||'{}')}
+function saveUsers(db){localStorage.setItem('hc_users',JSON.stringify(db))}
+function getUserData(){return currentUser?getUsers()[currentUser.email]:null}
+function saveUserData(data){const db=getUsers();db[currentUser.email]=data;saveUsers(db)}
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('on',(tab==='login'&&i===0)||(tab==='signup'&&i===1)));
+  document.getElementById('form-login').classList.toggle('on',tab==='login');
+  document.getElementById('form-signup').classList.toggle('on',tab==='signup');
+  document.getElementById('login-err').classList.remove('on');
+  document.getElementById('signup-err').classList.remove('on');
+}
+
+function doLogin(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  const db=getUsers();
+  const btn=document.getElementById('login-btn');
+  if(!db[email]||db[email].pass!==pass){
+    document.getElementById('login-err').classList.add('on');return;
+  }
+  btn.innerHTML='<span class="spin"></span> Signing in…';btn.disabled=true;
+  currentUser=db[email];
+  setTimeout(()=>{bootApp();btn.innerHTML='Sign In to HealthCore';btn.disabled=false},900);
+}
+
+function doSignup(){
+  const fname=document.getElementById('su-fname').value.trim();
+  const lname=document.getElementById('su-lname').value.trim();
+  const email=document.getElementById('su-email').value.trim().toLowerCase();
+  const pass=document.getElementById('su-pass').value;
+  const age=document.getElementById('su-age').value;
+  const errEl=document.getElementById('signup-err');
+  errEl.classList.remove('on');
+  if(!fname||!email||!pass){errEl.textContent='Please fill all required fields.';errEl.classList.add('on');return}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.classList.add('on');return}
+  const db=getUsers();
+  if(db[email]){errEl.textContent='An account with this email already exists.';errEl.classList.add('on');return}
+  const newUser={fname,lname,email,pass,age:age||'25–35',joined:new Date().toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}),timetable:[],reports:[]};
+  db[email]=newUser;saveUsers(db);
+  currentUser=newUser;
+  const btn=document.getElementById('signup-btn');
+  btn.innerHTML='<span class="spin"></span> Creating account…';btn.disabled=true;
+  setTimeout(()=>{bootApp();btn.innerHTML='Create My Account';btn.disabled=false},900);
+}
+
+function doLogout(){
+  currentUser=null;cBuilt={};
+  localStorage.removeItem('hc_session');
+  closeNav();
+  document.getElementById('auth-wall').classList.remove('hidden');
+  document.getElementById('app-wrapper').style.display='none';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-err').classList.remove('on');
+  showToast('👋 Signed out','See you next time!');
+}
+
+function bootApp(){
+  const u=currentUser;
+  localStorage.setItem('hc_session',u.email);
+  document.getElementById('auth-wall').classList.add('hidden');
+  document.getElementById('app-wrapper').style.display='';
+  // update UI with user info
+  const initials=(u.fname[0]+(u.lname?u.lname[0]:'')).toUpperCase();
+  document.getElementById('nav-av').textContent=initials;
+  document.getElementById('nav-uname').textContent=u.fname+' '+(u.lname||'');
+  document.getElementById('cur-ic').textContent='🏡';
+  document.getElementById('cur-nm').textContent='Home';
+  // load user's timetable & reports
+  renderTimetable();
+  renderUserReports();
+  // greet
+  setTimeout(()=>showToast(`🌿 Welcome back, ${u.fname}!`,`Great to see you. Let's check on your wellness today.`),600);
+  setTimeout(()=>animRing('dash-ring',78),700);
+}
+
+// check session on load
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=localStorage.getItem('hc_session');
+  if(saved){const db=getUsers();if(db[saved]){currentUser=db[saved];bootApp();return}}
+  // show auth wall
+  document.getElementById('app-wrapper').style.display='none';
+});
+
+// ── TIMETABLE (per user) ──
+function renderTimetable(){
+  const u=getUserData();if(!u)return;
+  const tt=u.timetable||[];
+  const container=document.getElementById('timetable-list');
+  if(!container)return;
+  if(tt.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--k4)"><div style="font-size:36px;margin-bottom:10px">📅</div><div style="font-size:14px">No schedule entries yet. Add your first one!</div></div>`;
+    return;
+  }
+  const sorted=[...tt].sort((a,b)=>a.time.localeCompare(b.time));
+  container.innerHTML=sorted.map(item=>`
+    <div class="tt-item" id="tti-${item.id}">
+      <div class="tt-time">${item.time}</div>
+      <div class="tt-emoji" style="background:${item.color}22;border:1px solid ${item.color}44">${item.emoji}</div>
+      <div class="tt-body">
+        <div class="tt-title">${item.title}</div>
+        ${item.note?`<div class="tt-note">${item.note}</div>`:''}
+      </div>
+      <div class="tt-tag" style="background:${item.color}18;color:${item.color};border:1px solid ${item.color}33">${getTagLabel(item.color)}</div>
+      <button class="tt-del" onclick="deleteTTItem('${item.id}')" title="Delete">✕</button>
+    </div>`).join('');
+}
+
+function getTagLabel(color){
+  const map={'#6B8F71':'Workout','#C49A3C':'Nutrition','#9B8BB4':'Mental','#5ba8cc':'Hydration','#C07680':'Sleep','#C17D5E':'Activity'};
+  return map[color]||'Task';
+}
+
+function addTTItem(){
+  const time=document.getElementById('tt-time').value;
+  const title=document.getElementById('tt-title').value.trim();
+  const note=document.getElementById('tt-note-in').value.trim();
+  const cat=document.getElementById('tt-cat').value;
+  if(!time||!title){showToast('⚠ Missing info','Please add a time and title.');return}
+  const cats={workout:{color:'#6B8F71',emoji:'💪'},nutrition:{color:'#C49A3C',emoji:'🥗'},mental:{color:'#9B8BB4',emoji:'🧘'},hydration:{color:'#5ba8cc',emoji:'💧'},sleep:{color:'#C07680',emoji:'😴'},activity:{color:'#C17D5E',emoji:'🏃'}};
+  const c=cats[cat]||{color:'#6B8F71',emoji:'⚡'};
+  const u=getUserData();
+  const newItem={id:'t'+Date.now(),time,title,note,color:c.color,emoji:c.emoji};
+  u.timetable=u.timetable||[];u.timetable.push(newItem);
+  saveUserData(u);
+  document.getElementById('tt-time').value='';document.getElementById('tt-title').value='';document.getElementById('tt-note-in').value='';
+  renderTimetable();
+  showToast('✅ Added',`"${title}" added to your schedule`);
+}
+
+function deleteTTItem(id){
+  const u=getUserData();
+  u.timetable=(u.timetable||[]).filter(i=>i.id!==id);
+  saveUserData(u);renderTimetable();
+  showToast('🗑 Removed','Schedule entry deleted');
+}
+
+// ── USER REPORTS (per user) ──
+function renderUserReports(){
+  const u=getUserData();if(!u)return;
+  const reports=u.reports||[];
+  const container=document.getElementById('user-reports-list');
+  if(!container)return;
+  const riskPill={Low:'p-sg',Medium:'p-am',High:'p-rs'};
+  if(reports.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--k4)"><div style="font-size:36px;margin-bottom:10px">📋</div><div>No reports yet. Use the Health Score & Symptom tools to generate them.</div></div>`;
+    return;
+  }
+  container.innerHTML=[...reports].reverse().map(r=>`
+    <div class="rr">
+      <div class="rr-ic">${r.type.includes('Symptom')?'🔍':r.type.includes('Weekly')?'📊':'📋'}</div>
+      <div style="flex:1">
+        <div class="rr-n">${r.type}</div>
+        <div class="rr-m">${r.date} · ${r.detail}</div>
+      </div>
+      ${r.score!==null?`<div class="rr-s" style="color:var(--sg-d)">${r.score}</div>`:`<span class="pill ${riskPill[r.risk]||'p-sg'}" style="font-size:10.5px">${r.risk}</span>`}
+    </div>`).join('');
+}
+
+function saveReport(type,score,risk,detail){
+  const u=getUserData();if(!u)return;
+  u.reports=u.reports||[];
+  u.reports.push({id:'r'+Date.now(),date:new Date().toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}),type,score:score||null,risk,detail});
+  saveUserData(u);renderUserReports();
+}
+
+// ── THREE-DOT NAV ──
+const pageNames={home:'🏡 Home',dashboard:'📊 Dashboard',doctor:'🌿 AI Doctor',reports:'📋 Reports',score:'💚 Health Score',symptoms:'🔍 Symptom Check',routine:'☀️ Daily Routine',predict:'🔮 Predictions',profile:'👤 Profile',timetable:'📅 My Timetable'};
+
+function tgNav(){
+  const drop=document.getElementById('nav-drop');
+  const btn=document.getElementById('dots-btn');
+  const back=document.getElementById('nav-backdrop');
+  const isOpen=drop.classList.contains('open');
+  if(isOpen){closeNav()}else{drop.classList.add('open');btn.classList.add('open');back.classList.add('open')}
+}
+function closeNav(){
+  document.getElementById('nav-drop').classList.remove('open');
+  document.getElementById('dots-btn').classList.remove('open');
+  document.getElementById('nav-backdrop').classList.remove('open');
+}
+
+// ── NAVIGATION ──
+function nav(page,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('page-'+page).classList.add('on');
+  if(el){el.classList.add('on')}
+  else{
+    const m={home:0,dashboard:1,doctor:2,reports:3,score:4,symptoms:5,routine:6,predict:7,timetable:8,profile:9};
+    const its=document.querySelectorAll('.ni');if(its[m[page]])its[m[page]].classList.add('on');
+  }
+  const nm=pageNames[page]||page;
+  const parts=nm.split(' ');
+  document.getElementById('cur-ic').textContent=parts[0];
+  document.getElementById('cur-nm').textContent=parts.slice(1).join(' ');
+  if(page==='dashboard'){setTimeout(initDash,100);animRing('dash-ring',78)}
+  if(page==='predict')setTimeout(initRisk,100);
+  if(page==='reports'){renderUserReports()}
+  if(page==='timetable'){renderTimetable()}
+  if(page==='profile'){populateProfile()}
+  window.scrollTo(0,0);
+}
+function tgSb(){}
+
+function populateProfile(){
+  const u=getUserData();if(!u)return;
+  const fn=document.getElementById('prof-fname');
+  const ln=document.getElementById('prof-lname');
+  const since=document.getElementById('prof-since');
+  if(fn)fn.value=u.fname;
+  if(ln)ln.value=u.lname||'';
+  if(since)since.textContent=u.joined||'—';
+}
+
+// ── CLOCKS ──
+function tickTok(){
+  const n=new Date(),m=new Date();m.setHours(24,0,0,0);
+  const d=m-n,h=String(Math.floor(d/3600000)).padStart(2,'0'),mi=String(Math.floor((d%3600000)/60000)).padStart(2,'0'),s=String(Math.floor((d%60000)/1000)).padStart(2,'0');
+  const el=document.getElementById('tr');if(el)el.textContent=`${h}:${mi}:${s}`;
+}
+setInterval(tickTok,1000);tickTok();
+
+function tickSes(){
+  const e=Math.floor((Date.now()-sesS)/1000),m=String(Math.floor(e/60)).padStart(2,'0'),s=String(e%60).padStart(2,'0');
+  const el=document.getElementById('st');if(el)el.textContent=`${m}:${s}`;
+}
+setInterval(tickSes,1000);
+
+// ── TOKENS ──
+function useTok(n){tokens=Math.max(0,tokens-n);document.getElementById('tn').textContent=tokens;document.getElementById('tb2').style.width=tokens+'%'}
+
+// ── TOAST ──
+function showToast(title,body){
+  const el=document.getElementById('toast');
+  document.getElementById('t-t').textContent=title;
+  document.getElementById('t-b').textContent=body;
+  el.classList.add('on');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4200);
+}
+
+// ── RING ANIMATION ──
+function animRing(id,score){const el=document.getElementById(id);if(!el)return;el.style.strokeDashoffset=471-(score/100)*471}
+
+// ── HEALTH SCORE ──
+function calcScore(){
+  const btn=document.getElementById('sc-b');
+  const sl=parseFloat(document.getElementById('si').value),
+        di=parseInt(document.getElementById('di').value),
+        ac=parseInt(document.getElementById('ai').value),
+        st=parseInt(document.getElementById('sti').value),
+        sy=document.getElementById('sy-i').value.toLowerCase();
+  btn.innerHTML='<span class="spin"></span> Calculating…';btn.disabled=true;
+  setTimeout(()=>{
+    const sS=Math.min(100,(sl/8)*100),dS=di*10,aS=ac*10,stS=(10-st)*10,pen=sy.length>3?10:0;
+    const score=Math.max(0,Math.min(100,Math.round(sS*.25+dS*.25+aS*.3+stS*.2-pen)));
+    const risk=score>=70?'low':score>=50?'medium':'high';
+    const rl={low:'Low Risk',medium:'Medium Risk',high:'High Risk'}[risk];
+    const rp={low:'p-sg',medium:'p-am',high:'p-rs'}[risk];
+    const rc={low:'var(--sg-d)',medium:'var(--am)',high:'var(--rs)'}[risk];
+    document.getElementById('sc-r').innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;padding:14px 0 22px">
+        <div class="rw" style="margin-bottom:14px">
+          <svg class="rsvg" viewBox="0 0 168 168">
+            <circle class="rt" cx="84" cy="84" r="74"/>
+            <circle class="rf" id="sc-ring" cx="84" cy="84" r="74" stroke="${rc}"/>
+          </svg>
+          <div class="rc"><div class="rn" style="color:${rc}">${score}</div><div class="rl">out of 100</div></div>
+        </div>
+        <span class="pill ${rp}">${rl}</span>
+      </div>`;
+    setTimeout(()=>animRing('sc-ring',score),50);
+    document.getElementById('sc-f').innerHTML=[
+      {n:'Sleep',v:Math.round(sS),c:'linear-gradient(90deg,var(--lv-p),var(--lv))'},
+      {n:'Diet',v:dS,c:'linear-gradient(90deg,var(--am-p),var(--am))'},
+      {n:'Activity',v:aS,c:'linear-gradient(90deg,var(--sg-p),var(--sg))'},
+      {n:'Stress Control',v:stS,c:`linear-gradient(90deg,${stS<40?'var(--rs-p),var(--rs)':'var(--sg-p),var(--sg)'})`}
+    ].map(f=>`<div class="prog"><div class="pr"><span class="pn">${f.n}</span><span class="pv">${f.v}%</span></div><div class="pt"><div class="pf" style="width:${f.v}%;background:${f.c}"></div></div></div>`).join('');
+    const tips=[];
+    if(sl<7)tips.push('😴 Aim for 7–9 hours of consistent, quality sleep');
+    if(di<7)tips.push('🥗 Add whole foods and cut back on processed sugar');
+    if(ac<6)tips.push('🚶 A 30-minute daily walk makes a measurable difference');
+    if(st>5)tips.push('🧘 10 minutes of breathwork daily lowers cortisol significantly');
+    if(sy.length>3)tips.push('🩺 Consult a healthcare provider about your symptoms');
+    if(!tips.length)tips.push('🌿 Excellent habits — keep nurturing your wellbeing');
+    document.getElementById('tips').innerHTML=tips.join('<br>');
+    document.getElementById('sc-d').style.display='block';
+    useTok(3);btn.innerHTML='Recalculate →';btn.disabled=false;
+    saveReport('Daily Report',score,risk==='low'?'Low':risk==='medium'?'Medium':'High',`Health score calculated: ${score}/100`);
+    showToast('✅ Score ready',`Your health score is ${score}/100 — ${rl}`);
+  },1800);
+}
+
+// ── SYMPTOMS ──
+function analyzeSyms(){
+  const btn=document.getElementById('sy-b');
+  const syms=document.getElementById('sy-t').value.trim();
+  if(!syms){alert('Please describe your symptoms.');return}
+  btn.innerHTML='<span class="spin"></span> Analyzing…';btn.disabled=true;
+  const prompt=`You are a medical AI. Patient: Age ${document.getElementById('ag').value||'?'}, Profession: ${document.getElementById('pr').value||'?'}, Lifestyle: ${document.getElementById('ls').value||'?'}, Symptoms: ${syms}, Duration: ${document.getElementById('dr').value}. Respond ONLY in valid JSON (no markdown, no backticks): {"conditions":[{"name":"str","probability":65,"description":"brief"},{"name":"str","probability":30,"description":"brief"},{"name":"str","probability":15,"description":"brief"}],"overallRisk":"Low","riskScore":25,"urgency":"Non-urgent","actions":["str","str","str"],"lifestyle_note":"str"}`;
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})})
+  .then(r=>r.json()).then(d=>{renderSym(JSON.parse(d.content[0].text.replace(/```json|```/g,'').trim()));useTok(5)})
+  .catch(()=>{renderSym({conditions:[{name:"Tension Headache",probability:68,description:"Stress-induced muscle tension causing head and neck pain."},{name:"Dehydration",probability:45,description:"Insufficient fluid intake is a frequent cause of headache and fatigue."},{name:"Migraine",probability:22,description:"Neurological condition with throbbing head pain, often one-sided."}],overallRisk:"Low",riskScore:24,urgency:"Non-urgent",actions:["Rest in a quiet, dim space","Drink 500ml of water immediately","Reduce screen time for 1–2 hours","Consider OTC pain relief if needed"],lifestyle_note:"Sedentary work often contributes to tension headaches. Regular movement breaks and hydration help."});useTok(5)})
+  .finally(()=>{btn.innerHTML='Re-Analyze →';btn.disabled=false});
+}
+
+function renderSym(r){
+  const rC={Low:{p:'p-sg',c:'var(--sg-d)'},Medium:{p:'p-am',c:'var(--am)'},High:{p:'p-rs',c:'var(--rs)'}}[r.overallRisk]||{p:'p-sg',c:'var(--sg-d)'};
+  document.getElementById('sy-r').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--k3);margin-bottom:5px">Overall Risk</div><span class="pill ${rC.p}">${r.overallRisk} Risk</span></div>
+      <div style="text-align:right"><div style="font-family:var(--fd);font-size:38px;font-weight:500;color:${rC.c};letter-spacing:-.03em;line-height:1">${r.riskScore}%</div><div style="font-size:11px;color:var(--k4)">risk score</div></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--k3);margin-bottom:12px">Possible Conditions</div>
+      ${r.conditions.map(c=>`<div style="margin-bottom:13px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13.5px;font-weight:600;color:var(--k0)">${c.name}</span><span style="font-size:12.5px;font-weight:700;color:${rC.c}">${c.probability}%</span></div><div class="pt"><div class="pf" style="width:${c.probability}%;background:linear-gradient(90deg,${rC.c}38,${rC.c})"></div></div><div style="font-size:12px;color:var(--k3);margin-top:4px">${c.description}</div></div>`).join('')}
+    </div>
+    <div style="padding:11px 13px;background:var(--am-p);border:1px solid rgba(196,154,60,.2);border-radius:var(--r4);margin-bottom:15px">
+      <div style="font-size:12px;font-weight:700;color:#6b4f0e;margin-bottom:3px">Urgency: ${r.urgency}</div>
+      <div style="font-size:12px;color:#8a6620">${r.lifestyle_note}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--k3);margin-bottom:9px">Recommended Actions</div>
+      ${r.actions.map(a=>`<div style="font-size:13px;color:var(--k2);padding:5px 0;display:flex;gap:8px"><span style="color:var(--sg);font-weight:700">→</span>${a}</div>`).join('')}
+    </div>`;
+  showToast('🔍 Analysis complete',`${r.conditions[0]?.name} most likely (${r.conditions[0]?.probability}%)`);
+  saveReport('Symptom Analysis',null,r.overallRisk,`${r.conditions[0]?.name} most likely (${r.conditions[0]?.probability}%)`);
+}
+
+// ── ROUTINE ──
+function genRoutine(){
+  const btn=document.getElementById('r-b');
+  const g=document.getElementById('rg').value,t=document.getElementById('rt').value,f=document.getElementById('rf').value,d=document.getElementById('rd').value;
+  btn.innerHTML='<span class="spin"></span> Crafting your routine…';btn.disabled=true;
+  const prompt=`Create a personalized wellness routine: Goal: ${g}, Time: ${t}, Fitness: ${f}, Diet: ${d}. Respond ONLY in valid JSON (no markdown): {"schedule":[{"time":"6:00 AM","title":"name","description":"details","category":"sleep|workout|nutrition|mental|hydration","duration":"15 min"}],"tip":"key insight"} Include 8–10 items spanning the full day.`;
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})})
+  .then(r=>r.json()).then(d=>{renderRoutine(JSON.parse(d.content[0].text.replace(/```json|```/g,'').trim()),g);useTok(4)})
+  .catch(()=>{renderRoutine({schedule:[
+    {time:"6:00 AM",title:"Rise & Hydrate",description:"500ml water, open a window, breathe slowly for 2 min",category:"hydration",duration:"10 min"},
+    {time:"6:30 AM",title:"Morning Movement",description:"30-min walk or gentle bodyweight session to build momentum",category:"workout",duration:"30 min"},
+    {time:"7:30 AM",title:"Nourishing Breakfast",description:"Oats with berries, two eggs, green tea",category:"nutrition",duration:"20 min"},
+    {time:"10:00 AM",title:"Mindful Break",description:"5 minutes away from screen — stretch, slow breath",category:"mental",duration:"5 min"},
+    {time:"12:30 PM",title:"Balanced Lunch",description:"Lean protein, complex carbs, a handful of greens",category:"nutrition",duration:"30 min"},
+    {time:"3:00 PM",title:"Hydration Check",description:"Drink 400ml water — dehydration peaks here",category:"hydration",duration:"2 min"},
+    {time:"5:30 PM",title:"Evening Walk",description:"20 min outside — decompresses the mind beautifully",category:"workout",duration:"20 min"},
+    {time:"7:00 PM",title:"Light Dinner",description:"Vegetable-forward, minimal heavy carbs after 7 PM",category:"nutrition",duration:"30 min"},
+    {time:"9:00 PM",title:"Wind Down",description:"No screens, light reading or journaling, herbal tea",category:"mental",duration:"45 min"},
+    {time:"10:00 PM",title:"Sleep",description:"Protect 7–8 hours fiercely — it is the foundation of everything",category:"sleep",duration:"7–8 hrs"}
+  ],tip:"Small, consistent actions compound into extraordinary health. Seek continuity, not perfection."},g);useTok(4)})
+  .finally(()=>{btn.innerHTML='Regenerate →';btn.disabled=false});
+}
+
+function renderRoutine(r,goal){
+  const bg={sleep:'var(--lv-p)',workout:'var(--sg-p)',nutrition:'var(--am-p)',mental:'var(--rs-p)',hydration:'#cce8f4'};
+  const ic={sleep:'😴',workout:'💪',nutrition:'🥗',mental:'🧘',hydration:'💧'};
+  document.getElementById('r-r').innerHTML=`
+    <div style="padding:10px 12px;background:var(--sg-m);border:1px solid rgba(107,143,113,.15);border-radius:var(--r4);margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--sg-d)">Goal: ${goal}</div>
+      <div style="font-size:12px;color:var(--k3);margin-top:2px;font-style:italic">"${r.tip}"</div>
+    </div>
+    ${r.schedule.map(s=>`
+      <div class="ri">
+        <div class="ri-tc"><div class="ri-tm">${s.time}</div></div>
+        <div class="ri-ic" style="background:${bg[s.category]||'var(--c1)'}">${ic[s.category]||'⚡'}</div>
+        <div class="ri-b"><div class="ri-t">${s.title}</div><div class="ri-d">${s.description}</div><div class="ri-du">${s.duration}</div></div>
+      </div>`).join('')}`;
+  showToast('☀️ Routine ready',`Your personalized ${goal} plan has been created`);
+}
+
+// ── CHAT ──
+async function sendMsg(){
+  const inp=document.getElementById('chatIn');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';addMsg(msg,'u');showTyping(true);
+  mCount++;document.getElementById('mcnt').textContent=mCount;
+  const prompt=`You are Dr. Aura — a warm, knowledgeable, empathetic AI health assistant. Respond like a calm, thoughtful doctor who genuinely cares. Keep responses concise (2–4 sentences), clear, evidence-based. Always remind users to see a real doctor for serious concerns. Patient says: "${msg}"`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+    const d=await res.json();const reply=d.content[0].text;
+    showTyping(false);addMsg(reply,'a');useTok(2);tokU+=2;document.getElementById('tu').textContent=tokU;
+    if(voiceOn&&'speechSynthesis'in window){const u=new SpeechSynthesisUtterance(reply);u.rate=.92;u.pitch=1.05;window.speechSynthesis.speak(u)}
+  }catch{
+    showTyping(false);
+    addMsg(["That's worth paying attention to. Rest, stay hydrated, and monitor how you feel over the next day. If it persists or worsens, please see a healthcare provider.",
+      "I hear you. What you're describing often relates to lifestyle factors like sleep and hydration. Track it closely — and if it continues, please consult a doctor.",
+      "Thank you for sharing that. Based on what you've described, this doesn't sound immediately alarming, but trust your body — if something feels off, seek in-person care."
+    ][Math.floor(Math.random()*3)],'a');
+    useTok(2);tokU+=2;document.getElementById('tu').textContent=tokU;
+  }
+}
+function qc(msg){document.getElementById('chatIn').value=msg;sendMsg()}
+function addMsg(text,type){
+  const c=document.getElementById('chatMsgs'),el=document.createElement('div');
+  el.className=`msg m${type}`;
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=`<div class="mb">${text}</div><div class="mt">${type==='a'?'Dr. Aura':'You'} · ${t}</div>`;
+  c.appendChild(el);c.scrollTop=c.scrollHeight;
+}
+function showTyping(show){
+  let el=document.getElementById('tyr');
+  if(!el&&show){const c=document.getElementById('chatMsgs');el=document.createElement('div');el.id='tyr';el.className='msg ma';el.innerHTML='<div class="typing on"><div class="td"></div><div class="td"></div><div class="td"></div></div>';c.appendChild(el);c.scrollTop=c.scrollHeight}
+  else if(el&&!show)el.remove();
+}
+function clrChat(){document.getElementById('chatMsgs').innerHTML='<div class="msg ma"><div class="mb">Cleared 🌿 How can I help you today?</div><div class="mt">Dr. Aura · Just now</div></div>'}
+function tgVoice(){
+  voiceOn=!voiceOn;
+  const b=document.getElementById('vt');
+  b.textContent=voiceOn?'🔊 Voice ON':'🎙 Voice Mode';
+  showToast(voiceOn?'🔊 Voice activated':'🔇 Voice off',voiceOn?'Dr. Aura will now speak responses.':'Voice responses disabled.');
+}
+function startVoice(){
+  const b=document.getElementById('vBtn');
+  if('webkitSpeechRecognition'in window||'SpeechRecognition'in window){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recog=new SR();
+    recog.onstart=()=>{b.classList.add('rec');b.textContent='⏹'};
+    recog.onresult=e=>{document.getElementById('chatIn').value=e.results[0][0].transcript;sendMsg()};
+    recog.onend=()=>{b.classList.remove('rec');b.textContent='🎙'};
+    recog.start();
+  }else showToast('⚠ Not supported','Voice input is unavailable in this browser.');
+}
+
+// ── CHARTS ──
+let cBuilt={};
+Chart.defaults.color='#9B9089';Chart.defaults.font.family="'Instrument Sans', sans-serif";
+
+function initDash(){
+  if(cBuilt.dash)return;cBuilt.dash=true;
+  const ctx=document.getElementById('actChart');if(!ctx)return;
+  new Chart(ctx,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[
+    {label:'Steps (k)',data:[6.2,7.8,5.5,8.4,9.1,11.2,8.4],backgroundColor:'rgba(107,143,113,.18)',borderColor:'#6B8F71',borderWidth:2,borderRadius:6},
+    {label:'Active Min',data:[30,45,25,55,60,80,50],backgroundColor:'rgba(155,139,180,.13)',borderColor:'#9B8BB4',borderWidth:2,borderRadius:6}
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:'#A89E96',font:{size:11}}}},scales:{x:{ticks:{color:'#C4BAB2'},grid:{color:'rgba(44,37,32,.04)'}},y:{ticks:{color:'#C4BAB2'},grid:{color:'rgba(44,37,32,.04)'}}}}}); 
+}
+function initRisk(){
+  if(cBuilt.risk)return;cBuilt.risk=true;
+  const ctx=document.getElementById('riskChart');if(!ctx)return;
+  new Chart(ctx,{type:'line',data:{labels:['Now','+7d','+14d','+21d','+30d','+45d','+60d'],datasets:[
+    {label:'Stress %',data:[22,26,30,33,34,31,28],borderColor:'#C49A3C',backgroundColor:'rgba(196,154,60,.07)',tension:.4,fill:true,pointBackgroundColor:'#C49A3C',pointRadius:4},
+    {label:'Sleep Risk %',data:[12,14,15,16,15,14,13],borderColor:'#C07680',backgroundColor:'rgba(192,118,128,.05)',tension:.4,fill:true,pointBackgroundColor:'#C07680',pointRadius:4},
+    {label:'Cardio %',data:[10,9,9,8,8,7,6],borderColor:'#6B8F71',backgroundColor:'rgba(107,143,113,.05)',tension:.4,fill:true,pointBackgroundColor:'#6B8F71',pointRadius:4}
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:'#A89E96',font:{size:11}}}},scales:{x:{ticks:{color:'#C4BAB2'},grid:{color:'rgba(44,37,32,.04)'}},y:{ticks:{color:'#C4BAB2'},grid:{color:'rgba(44,37,32,.04)'}}}}});
+}
+function initTrend(){
+  if(cBuilt.trend)return;cBuilt.trend=true;
+  const ctx=document.getElementById('trendChart');if(!ctx)return;
+  const lbs=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en',{month:'short',day:'numeric'})});
+  new Chart(ctx,{type:'line',data:{labels:lbs,datasets:[{label:'Health Score',data:Array.from({length:30},()=>Math.floor(56+Math.random()*32)),borderColor:'#6B8F71',backgroundColor:'rgba(107,143,113,.07)',pointBackgroundColor:'#6B8F71',pointRadius:2,tension:.4,fill:true}]},options:{responsive:true,plugins:{legend:{labels:{color:'#A89E96',font:{size:11}}}},scales:{x:{ticks:{color:'#C4BAB2',maxTicksLimit:8},grid:{color:'rgba(44,37,32,.04)'}},y:{min:40,max:100,ticks:{color:'#C4BAB2'},grid:{color:'rgba(44,37,32,.04)'}}}}}); 
+}
+
+// ── TABS ──
+function swTab(page,tab,el){
+  document.querySelectorAll(`#page-${page} .tp`).forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll(`#page-${page} .tab`).forEach(t=>t.classList.remove('on'));
+  document.getElementById(`${page}-tab-${tab}`).classList.add('on');
+  el.classList.add('on');
+  if(tab==='trends')setTimeout(initTrend,50);
+}
+
+// ── MISC ──
+function rfrPred(){showToast('🔮 Refreshing','Recalculating risk models…');setTimeout(()=>showToast('✅ Updated','Predictions recalculated.'),1800)}
+function saveProf(){
+  // also save name updates
+  const fn=document.getElementById('prof-fname');
+  const ln=document.getElementById('prof-lname');
+  if(fn&&ln&&currentUser){
+    const u=getUserData();
+    u.fname=fn.value||u.fname;u.lname=ln.value||u.lname;
+    saveUserData(u);
+    document.getElementById('nav-uname').textContent=u.fname+' '+(u.lname||'');
+    const av=(u.fname[0]+(u.lname?u.lname[0]:'')).toUpperCase();
+    document.getElementById('nav-av').textContent=av;
+  }
+  showToast('✅ Profile saved','Your health background has been updated.');
+}
+
+function clearTimetable(){
+  if(!confirm('Clear your entire schedule?'))return;
+  const u=getUserData();u.timetable=[];saveUserData(u);renderTimetable();
+  showToast('🗑 Cleared','Your schedule has been reset.');
+}
+
+// ── INIT ──
+// (auth check handled by DOMContentLoaded above)
+
+</script>
+</body>
+</html>
